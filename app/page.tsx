@@ -8,6 +8,7 @@ import {
   GraduationCap,
   Landmark,
   LifeBuoy,
+  RotateCcw,
   ShieldCheck,
   Sparkles,
   Wallet,
@@ -354,6 +355,21 @@ export default function Home() {
         <div className="flex flex-wrap items-center gap-2">
           {viewMode === "dashboard" && (
             <>
+              <button
+                type="button"
+                onClick={() => {
+                  setInputs({ ...DEFAULT_INPUTS });
+                  setReport(null);
+                  setActivePreset(null);
+                  setError(null);
+                  setSimulatePlan(false);
+                  setCurrency("USD");
+                }}
+                className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rose-500/50 hover:text-rose-300"
+                title="Reset all inputs and report to defaults"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
               <button
                 type="button"
                 onClick={() => setViewMode("welcome")}
