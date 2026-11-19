@@ -98,10 +98,11 @@ interface ToggleRowProps {
   label: string;
   hint: string;
   checked: boolean;
+  delta?: number | null;
   onChange: (next: boolean) => void;
 }
 
-function ToggleRow({ label, hint, checked, onChange }: ToggleRowProps) {
+function ToggleRow({ label, hint, checked, delta, onChange }: ToggleRowProps) {
   return (
     <button
       type="button"
@@ -115,7 +116,14 @@ function ToggleRow({ label, hint, checked, onChange }: ToggleRowProps) {
       }`}
     >
       <span>
-        <span className="block text-sm font-semibold text-slate-100">{label}</span>
+        <span className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+          {label}
+          {checked && delta !== undefined && delta !== null && delta < 0 && (
+            <span className="inline-flex items-center rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-rose-300">
+              {delta} days
+            </span>
+          )}
+        </span>
         <span className="block text-xs text-slate-400">{hint}</span>
       </span>
       <span
@@ -226,6 +234,22 @@ export default function Home() {
       ),
     [inputs, simulation],
   );
+
+  const crisisDeltas = useMemo(() => {
+    const simulateWith = (flag: "delayedJobOffer" | "salaryCut20Percent" | "emergencyShock") =>
+      simulateTimeline({ ...inputs, [flag]: !inputs[flag] });
+    return {
+      delayedJobOffer: inputs.delayedJobOffer
+        ? simulation.runwayDaysAfterGrad - simulateWith("delayedJobOffer").runwayDaysAfterGrad
+        : null,
+      salaryCut20Percent: inputs.salaryCut20Percent
+        ? simulation.runwayDaysAfterGrad - simulateWith("salaryCut20Percent").runwayDaysAfterGrad
+        : null,
+      emergencyShock: inputs.emergencyShock
+        ? simulation.runwayDaysAfterGrad - simulateWith("emergencyShock").runwayDaysAfterGrad
+        : null,
+    };
+  }, [inputs, simulation]);
 
   const storageKey = `gradrunway-report-${analysisHash}`;
 
@@ -582,18 +606,21 @@ export default function Home() {
                   label="Delayed Job Offer"
                   hint="+2 extra months of job hunting"
                   checked={inputs.delayedJobOffer}
+                  delta={crisisDeltas.delayedJobOffer}
                   onChange={() => toggleFlag("delayedJobOffer")}
                 />
                 <ToggleRow
                   label="Starting Salary -20%"
                   hint="First-job pay cut reality check"
                   checked={inputs.salaryCut20Percent}
+                  delta={crisisDeltas.salaryCut20Percent}
                   onChange={() => toggleFlag("salaryCut20Percent")}
                 />
                 <ToggleRow
                   label="Unexpected $1,500 Emergency"
                   hint="Expense 2 months after graduation"
                   checked={inputs.emergencyShock}
+                  delta={crisisDeltas.emergencyShock}
                   onChange={() => toggleFlag("emergencyShock")}
                 />
               </div>
