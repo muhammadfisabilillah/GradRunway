@@ -31,24 +31,148 @@ import {
   type SimulationResult,
 } from "@/lib/financeEngine";
 import {
+  CURRENCY_RATES,
+  CURRENCY_SYMBOLS,
+  type Currency,
+  formatCurrency,
+} from "@/lib/currency";
+import {
   STUDENT_PRESETS,
   type AIAdvisorReport,
-  type Currency,
   type StudentPreset,
 } from "@/lib/presets";
 
 type ViewMode = "welcome" | "guide" | "demo" | "wizard" | "dashboard";
 
-const CURRENCY_SYMBOLS: Record<Currency, string> = {
-  USD: "$",
-  HKD: "HK$",
-  IDR: "Rp",
-};
-
-const CURRENCY_LOCALES: Record<Currency, string> = {
-  USD: "en-US",
-  HKD: "en-HK",
-  IDR: "id-ID",
+const T = {
+  en: {
+    reset: "Reset to defaults",
+    exit: "Exit",
+    presets: "Presets:",
+    back: "Back to Setup / Scenarios",
+    readiness: "Transition Readiness",
+    readinessTip: "Composite score (0-100) from runway days, buffer months, and cash-cliff penalties. Below 40 = high risk.",
+    burn: "Post-Grad Monthly Burn",
+    burnTip: "Your monthly cost after graduation: rent, food, transport, bills + fixed loan repayment.",
+    burnSub: "Cost of living + loan repayment",
+    lowBal: "Lowest Projected Balance",
+    lowBalTip: "The lowest cash balance across all 24 months. Negative = cash cliff, you run out of money.",
+    negBal: "Cash cliff — negative balance projected",
+    posBal: "Balance stays positive across 24 months",
+    survival: "Post-Grad Survival Buffer",
+    survivalTip: "How many days your savings last after graduation (after deposit), before your first paycheck arrives.",
+    days: "days",
+    survivalSub: "Cash at grad covers burn after deposit",
+    stressImpact: "Stress-Test Impact",
+    vsBaseline: "vs. baseline (no crisis toggles)",
+    runway: "Runway",
+    low: "Low balance",
+    ready: "Readiness",
+    campusCash: "Campus Cashflow",
+    savings: "Current savings",
+    savingsTip: "Cash you could touch today in an emergency.",
+    income: "Monthly student income",
+    incomeTip: "Allowance, part-time work, or side gigs while on campus.",
+    spend: "Monthly student spend",
+    spendTip: "Everything you spend in a normal month on campus.",
+    budget: "Budget Breakdown",
+    incomeLabel: "Income",
+    spendLabel: "Spend",
+    net: "Net",
+    gradLabel: "Graduation & Relocation",
+    gradTip: "Months until graduation",
+    gradTipSub: "How many months until you walk the stage?",
+    deposit: "Upfront moving deposit",
+    depositTip: "Security deposit plus first-month rent due at move-in — often before your first paycheck.",
+    firstJob: "First Job Reality",
+    salary: "Expected starting salary",
+    salaryTip: "Your expected gross monthly pay in your first role.",
+    jobSearch: "Job search months",
+    jobTip: "Realistic months hunting before your first paycheck arrives.",
+    postGrad: "Post-grad monthly cost",
+    postGradTip: "Rent, food, transport, and bills once you move out — your burn rate.",
+    loan: "Monthly loan repayment",
+    loanTip: "Fixed student-loan payment due every month.",
+    crisis: "What-If Crisis Stress-Test",
+    crisisSub: "Layer worst-case shocks onto your runway.",
+    delayed: "Delayed Job Offer",
+    delayedHint: "+2 extra months of job hunting",
+    salaryCut: "Starting Salary -20%",
+    salaryCutHint: "First-job pay cut reality check",
+    emergency: "Unexpected $1,500 Emergency",
+    emergencyHint: "Expense 2 months after graduation",
+    runAI: "Run AI Stress-Test & Action Plan",
+    analyzing: "Analyzing runway…",
+    runwayTitle: "24-Month Cash Runway",
+    cashCliff: "Cash cliff at",
+    preview: "Preview Micro-Action Savings Plan",
+    advisor: "AI Financial Advisor",
+    campusPhase: "Campus phase cash flow",
+  },
+  id: {
+    reset: "Reset ke default",
+    exit: "Keluar",
+    presets: "Preset:",
+    back: "Kembali ke Setup / Skenario",
+    readiness: "Kesiapan Transisi",
+    readinessTip: "Skor komposit (0-100) dari hari runway, bulan buffer, dan penalti cash cliff. Di bawah 40 = risiko tinggi.",
+    burn: "Burn Rate Bulanan Pasca-Lulus",
+    burnTip: "Biaya bulanan setelah kelulusan: sewa, makan, transportasi, tagihan + cicilan pinjaman tetap.",
+    burnSub: "Biaya hidup + cicilan pinjaman",
+    lowBal: "Saldo Terendah yang Diproyeksikan",
+    lowBalTip: "Saldo kas terendah selama 24 bulan. Negatif = cash cliff, uang habis.",
+    negBal: "Cash cliff — saldo negatif diproyeksikan",
+    posBal: "Saldo tetap positif selama 24 bulan",
+    survival: "Buffer Survival Pasca-Lulus",
+    survivalTip: "Berapa hari tabungan bertahan setelah kelulusan (setelah deposit), sebelum gaji pertama cair.",
+    days: "hari",
+    survivalSub: "Kas saat kelulusan menutupi burn setelah deposit",
+    stressImpact: "Dampak Stress-Test",
+    vsBaseline: "vs. baseline (tanpa toggle krisis)",
+    runway: "Runway",
+    low: "Saldo terendah",
+    ready: "Kesiapan",
+    campusCash: "Arus Kas Kampus",
+    savings: "Tabungan saat ini",
+    savingsTip: "Uang yang bisa kamu ambil hari ini kalau darurat.",
+    income: "Penghasilan bulanan mahasiswa",
+    incomeTip: "Uang bulanan, kerja part-time, atau side gig di kampus.",
+    spend: "Pengeluaran bulanan mahasiswa",
+    spendTip: "Semua yang kamu belanjakan dalam sebulan di kampus.",
+    budget: "Rincian Anggaran",
+    incomeLabel: "Pemasukan",
+    spendLabel: "Pengeluaran",
+    net: "Net",
+    gradLabel: "Kelulusan & Relokasi",
+    gradTip: "Bulan menuju kelulusan",
+    gradTipSub: "Berapa bulan lagi sampai kamu wisuda?",
+    deposit: "Deposit pindahan di muka",
+    depositTip: "Deposit keamanan plus sewa bulan pertama saat pindah — sering sebelum gaji pertama.",
+    firstJob: "Realitas Kerja Pertama",
+    salary: "Perkiraan gaji awal",
+    salaryTip: "Perkiraan gaji kotor bulanan di posisi pertama.",
+    jobSearch: "Bulan job search",
+    jobTip: "Realistis berapa bulan mencari kerja sebelum gaji pertama cair.",
+    postGrad: "Biaya bulanan pasca-lulus",
+    postGradTip: "Sewa, makan, transportasi, dan tagihan setelah pindah — burn rate kamu.",
+    loan: "Cicilan pinjaman bulanan",
+    loanTip: "Pembayaran pinjaman mahasiswa tetap setiap bulan.",
+    crisis: "What-If Skenario Krisis",
+    crisisSub: "Tambahkan shock terburuk ke runway kamu.",
+    delayed: "Penawaran Kerja Tertunda",
+    delayedHint: "+2 bulan ekstra job hunting",
+    salaryCut: "Gaji Awal -20%",
+    salaryCutHint: "Realitas potongan gaji pertama",
+    emergency: "Darurat Tak Terduga $1,500",
+    emergencyHint: "Pengeluaran 2 bulan setelah kelulusan",
+    runAI: "Jalankan AI Stress-Test & Rencana Aksi",
+    analyzing: "Menganalisis runway…",
+    runwayTitle: "Runway Kas 24 Bulan",
+    cashCliff: "Cash cliff di",
+    preview: "Preview Rencana Aksi Mikro",
+    advisor: "AI Financial Advisor",
+    campusPhase: "Arus kas fase kampus",
+  },
 };
 
 interface SliderRowProps {
@@ -153,13 +277,6 @@ function ToggleRow({ label, hint, checked, delta, onChange }: ToggleRowProps) {
       </span>
     </button>
   );
-}
-
-function formatCurrency(value: number, curr: Currency = "USD"): string {
-  const sign = value < 0 ? "-" : "";
-  const symbol = CURRENCY_SYMBOLS[curr];
-  const locale = CURRENCY_LOCALES[curr];
-  return `${sign}${symbol}${Math.abs(Math.round(value)).toLocaleString(locale)}`;
 }
 
 function hashString(value: string): string {
@@ -403,7 +520,7 @@ export default function Home() {
                 setCurrency("USD");
               }}
               className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-300 bg-white text-stone-500 transition hover:border-rose-300 hover:text-rose-500"
-              title={lang === "en" ? "Reset to defaults" : "Reset ke default"}
+              title={T[lang].reset}
             >
               <RotateCcw className="h-3 w-3" />
             </button>
@@ -412,7 +529,7 @@ export default function Home() {
               onClick={() => setViewMode("welcome")}
               className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[10px] font-bold text-stone-600 transition hover:border-stone-400"
             >
-              {lang === "en" ? "Exit" : "Keluar"}
+              {T[lang].exit}
             </button>
           </div>
         )}
@@ -422,7 +539,7 @@ export default function Home() {
         <div className="border-t border-stone-100 bg-white/60">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-1.5 px-4 py-1.5 sm:px-6">
             <span className="mr-1 text-[9px] font-bold uppercase tracking-wider text-stone-400">
-              {lang === "en" ? "Presets:" : "Preset:"}
+              {T[lang].presets}
             </span>
             {STUDENT_PRESETS.map((preset) => (
               <button
@@ -452,6 +569,8 @@ export default function Home() {
           setViewMode("wizard");
         }}
         onExploreDemos={() => setViewMode("demo")}
+        lang={lang}
+        onLangChange={setLang}
       />
     );
   }
@@ -465,6 +584,7 @@ export default function Home() {
         }
         onFinish={finishWizard}
         onBack={() => setViewMode("welcome")}
+        lang={lang}
       />
     );
   }
@@ -475,6 +595,7 @@ export default function Home() {
         presets={STUDENT_PRESETS}
         onSelect={applyPreset}
         onBack={() => setViewMode("welcome")}
+        lang={lang}
       />
     );
   }
@@ -491,7 +612,7 @@ export default function Home() {
         {stressDiff.hasStress && (
           <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
             <span className="text-xs font-bold uppercase tracking-wider text-rose-700">
-              Stress-Test Impact
+              {T[lang].stressImpact}
             </span>
             {stressDiff.runwayDiff !== 0 && (
               <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
@@ -499,7 +620,7 @@ export default function Home() {
                   ? "bg-rose-100 text-rose-700"
                   : "bg-emerald-100 text-emerald-700"
               }`}>
-                Runway {stressDiff.runwayDiff > 0 ? "+" : ""}{stressDiff.runwayDiff} days
+                {T[lang].runway} {stressDiff.runwayDiff > 0 ? "+" : ""}{stressDiff.runwayDiff} {T[lang].days}
               </span>
             )}
             {stressDiff.balanceDiff !== 0 && (
@@ -508,7 +629,7 @@ export default function Home() {
                   ? "bg-rose-100 text-rose-700"
                   : "bg-emerald-100 text-emerald-700"
               }`}>
-                Low balance {stressDiff.balanceDiff > 0 ? "+" : ""}{formatCurrency(stressDiff.balanceDiff, currency)}
+                {T[lang].low} {stressDiff.balanceDiff > 0 ? "+" : ""}{formatCurrency(stressDiff.balanceDiff, currency)}
               </span>
             )}
             {stressDiff.readinessDiff !== 0 && (
@@ -517,19 +638,19 @@ export default function Home() {
                   ? "bg-rose-100 text-rose-700"
                   : "bg-emerald-100 text-emerald-700"
               }`}>
-                Readiness {stressDiff.readinessDiff > 0 ? "+" : ""}{stressDiff.readinessDiff} pts
+                {T[lang].ready} {stressDiff.readinessDiff > 0 ? "+" : ""}{stressDiff.readinessDiff} pts
               </span>
             )}
             <span className="ml-auto text-[10px] text-stone-400">
-              vs. baseline (no crisis toggles)
+{T[lang].vsBaseline}
             </span>
           </div>
         )}
 
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <KpiCard
-            label="Transition Readiness"
-            tooltip="Composite score (0-100) from runway days, buffer months, and cash-cliff penalties. Below 40 = high risk."
+            label={T[lang].readiness}
+            tooltip={T[lang].readinessTip}
             icon={ShieldCheck}
           >
             <div className="mt-2 flex items-end gap-2">
@@ -559,8 +680,8 @@ export default function Home() {
           </KpiCard>
 
           <KpiCard
-            label="Post-Grad Monthly Burn"
-            tooltip="Your monthly cost after graduation: rent, food, transport, bills + fixed loan repayment."
+            label={T[lang].burn}
+            tooltip={T[lang].burnTip}
             icon={Flame}
             iconClass="text-amber-400"
           >
@@ -569,13 +690,13 @@ export default function Home() {
               <span className="text-sm font-medium text-stone-400">/mo</span>
             </p>
             <p className="mt-1 text-xs text-stone-400">
-              Cost of living + loan repayment
+              {T[lang].burnSub}
             </p>
           </KpiCard>
 
           <KpiCard
-            label="Lowest Projected Balance"
-            tooltip="The lowest cash balance across all 24 months. Negative = cash cliff, you run out of money."
+            label={T[lang].lowBal}
+            tooltip={T[lang].lowBalTip}
             icon={Wallet}
           >
             <p
@@ -589,24 +710,24 @@ export default function Home() {
             </p>
             <p className="mt-1 text-xs text-stone-400">
               {simulation.lowestBalance < 0
-                ? "Cash cliff — negative balance projected"
-                : "Balance stays positive across 24 months"
+                ? T[lang].negBal
+                : T[lang].posBal
               }
             </p>
           </KpiCard>
 
           <KpiCard
-            label="Post-Grad Survival Buffer"
-            tooltip="How many days your savings last after graduation (after deposit), before your first paycheck arrives."
+            label={T[lang].survival}
+            tooltip={T[lang].survivalTip}
             icon={LifeBuoy}
             iconClass="text-sky-400"
           >
             <p className="mt-2 text-3xl font-bold tracking-tight">
               {simulation.runwayDaysAfterGrad}
-              <span className="text-sm font-medium text-stone-400"> days</span>
+              <span className="text-sm font-medium text-stone-400"> {T[lang].days}</span>
             </p>
             <p className="mt-1 text-xs text-stone-400">
-              Cash at grad covers burn after deposit
+              {T[lang].survivalSub}
             </p>
           </KpiCard>
         </section>
@@ -616,12 +737,12 @@ export default function Home() {
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Landmark className="h-4 w-4 text-sky-400" />
-                Campus Cashflow
+                {T[lang].campusCash}
               </h2>
               <div className="flex flex-col gap-4">
                 <SliderRow
-                  label="Current savings"
-                  helper="Cash you could touch today in an emergency."
+                  label={T[lang].savings}
+                  helper={T[lang].savingsTip}
                   value={inputs.currentSavings}
                   min={0}
                   max={20000}
@@ -630,8 +751,8 @@ export default function Home() {
                   onChange={(v) => updateInput("currentSavings", v)}
                 />
                 <SliderRow
-                  label="Monthly student income"
-                  helper="Allowance, part-time work, or side gigs while on campus."
+                  label={T[lang].income}
+                  helper={T[lang].incomeTip}
                   value={inputs.monthlyStudentIncome}
                   min={0}
                   max={3000}
@@ -640,8 +761,8 @@ export default function Home() {
                   onChange={(v) => updateInput("monthlyStudentIncome", v)}
                 />
                 <SliderRow
-                  label="Monthly student spend"
-                  helper="Everything you spend in a normal month on campus."
+                  label={T[lang].spend}
+                  helper={T[lang].spendTip}
                   value={inputs.monthlyStudentSpend}
                   min={0}
                   max={3000}
@@ -655,7 +776,7 @@ export default function Home() {
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-3 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Wallet className="h-4 w-4 text-sky-400" />
-                Budget Breakdown
+                {T[lang].budget}
               </h2>
               <div className="flex items-center gap-5">
                 <div className="relative h-28 w-28 shrink-0">
@@ -689,17 +810,17 @@ export default function Home() {
                 <div className="flex flex-col gap-2 text-xs">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-stone-500">Income</span>
+                    <span className="text-stone-500">{T[lang].incomeLabel}</span>
                     <span className="ml-auto font-bold text-stone-900">{formatCurrency(inputs.monthlyStudentIncome, currency)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                    <span className="text-stone-500">Spend</span>
+                    <span className="text-stone-500">{T[lang].spendLabel}</span>
                     <span className="ml-auto font-bold text-stone-900">{formatCurrency(inputs.monthlyStudentSpend, currency)}</span>
                   </div>
                   <div className="flex items-center gap-2 border-t border-stone-100 pt-1.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-stone-300" />
-                    <span className="text-stone-500">Net</span>
+                    <span className="text-stone-500">{T[lang].net}</span>
                     <span className={`ml-auto font-bold ${inputs.monthlyStudentIncome - inputs.monthlyStudentSpend >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                       {formatCurrency(inputs.monthlyStudentIncome - inputs.monthlyStudentSpend, currency)}
                     </span>
@@ -707,19 +828,19 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-3 text-[10px] text-stone-400">
-                {lang === "en" ? "Campus phase cash flow" : "Arus kas fase kampus"}
+                {T[lang].campusPhase}
               </p>
             </div>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <GraduationCap className="h-4 w-4 text-emerald-400" />
-                Graduation &amp; Relocation
+                {T[lang].gradLabel}
               </h2>
               <div className="flex flex-col gap-4">
                 <SliderRow
-                  label="Months until graduation"
-                  helper="How many months until you walk the stage?"
+                  label={T[lang].gradTip}
+                  helper={T[lang].gradTipSub}
                   value={inputs.monthsUntilGraduation}
                   min={1}
                   max={24}
@@ -728,8 +849,8 @@ export default function Home() {
                   onChange={(v) => updateInput("monthsUntilGraduation", v)}
                 />
                 <SliderRow
-                  label="Upfront moving deposit"
-                  helper="Security deposit plus first-month rent due at move-in — often before your first paycheck."
+                  label={T[lang].deposit}
+                  helper={T[lang].depositTip}
                   value={inputs.upfrontMovingDeposit}
                   min={0}
                   max={8000}
@@ -743,12 +864,12 @@ export default function Home() {
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Wallet className="h-4 w-4 text-amber-400" />
-                First Job Reality
+                {T[lang].firstJob}
               </h2>
               <div className="flex flex-col gap-4">
                 <SliderRow
-                  label="Expected starting salary"
-                  helper="Your expected gross monthly pay in your first role."
+                  label={T[lang].salary}
+                  helper={T[lang].salaryTip}
                   value={inputs.expectedStartingSalary}
                   min={0}
                   max={8000}
@@ -757,8 +878,8 @@ export default function Home() {
                   onChange={(v) => updateInput("expectedStartingSalary", v)}
                 />
                 <SliderRow
-                  label="Job search months"
-                  helper="Realistic months hunting before your first paycheck arrives."
+                  label={T[lang].jobSearch}
+                  helper={T[lang].jobTip}
                   value={inputs.jobSearchMonths}
                   min={0}
                   max={9}
@@ -767,8 +888,8 @@ export default function Home() {
                   onChange={(v) => updateInput("jobSearchMonths", v)}
                 />
                 <SliderRow
-                  label="Post-grad monthly cost"
-                  helper="Rent, food, transport, and bills once you move out — your burn rate."
+                  label={T[lang].postGrad}
+                  helper={T[lang].postGradTip}
                   value={inputs.postGradMonthlyCost}
                   min={0}
                   max={6000}
@@ -777,8 +898,8 @@ export default function Home() {
                   onChange={(v) => updateInput("postGradMonthlyCost", v)}
                 />
                 <SliderRow
-                  label="Monthly loan repayment"
-                  helper="Fixed student-loan payment due every month."
+                  label={T[lang].loan}
+                  helper={T[lang].loanTip}
                   value={inputs.monthlyLoanRepayment}
                   min={0}
                   max={1500}
@@ -792,29 +913,29 @@ export default function Home() {
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-1 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <AlertTriangle className="h-4 w-4 text-rose-400" />
-                What-If Crisis Stress-Test
+                {T[lang].crisis}
               </h2>
               <p className="mb-4 text-xs text-stone-500">
-                Layer worst-case shocks onto your runway.
+{T[lang].crisisSub}
               </p>
               <div className="flex flex-col gap-2.5">
                 <ToggleRow
-                  label="Delayed Job Offer"
-                  hint="+2 extra months of job hunting"
+                  label={T[lang].delayed}
+                  hint={T[lang].delayedHint}
                   checked={inputs.delayedJobOffer}
                   delta={crisisDeltas.delayedJobOffer}
                   onChange={() => toggleFlag("delayedJobOffer")}
                 />
                 <ToggleRow
-                  label="Starting Salary -20%"
-                  hint="First-job pay cut reality check"
+                  label={T[lang].salaryCut}
+                  hint={T[lang].salaryCutHint}
                   checked={inputs.salaryCut20Percent}
                   delta={crisisDeltas.salaryCut20Percent}
                   onChange={() => toggleFlag("salaryCut20Percent")}
                 />
                 <ToggleRow
-                  label="Unexpected $1,500 Emergency"
-                  hint="Expense 2 months after graduation"
+                  label={T[lang].emergency}
+                  hint={T[lang].emergencyHint}
                   checked={inputs.emergencyShock}
                   delta={crisisDeltas.emergencyShock}
                   onChange={() => toggleFlag("emergencyShock")}
@@ -830,12 +951,12 @@ export default function Home() {
                 {loading ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-950 border-t-transparent" />
-                    Analyzing runway&hellip;
+                    {T[lang].analyzing}
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    Run AI Stress-Test &amp; Action Plan
+                    {T[lang].runAI}
                   </>
                 )}
               </button>
@@ -843,17 +964,17 @@ export default function Home() {
           </section>
 
           <section className="flex flex-col gap-5">
-            <VerdictBanner simulation={simulation} currencySymbol={CURRENCY_SYMBOLS[currency]} />
+            <VerdictBanner simulation={simulation} currency={currency} />
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="font-serif flex items-center gap-2 text-sm font-semibold text-stone-900">
                   <BrainCircuit className="h-4 w-4 text-emerald-400" />
-                  24-Month Cash Runway
+                   {T[lang].runwayTitle}
                 </h2>
                 {simulation.zeroCashMonth && (
                   <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700">
-                    Cash cliff at {simulation.zeroCashMonth}
+                    {T[lang].cashCliff} {simulation.zeroCashMonth}
                   </span>
                 )}
               </div>
@@ -861,7 +982,7 @@ export default function Home() {
                 timeline={simulation.timeline}
                 comparison={overlayTimeline}
                 showComparison={simulatePlan}
-                currencySymbol={CURRENCY_SYMBOLS[currency]}
+                currency={currency}
               />
               <button
                 type="button"
@@ -872,14 +993,14 @@ export default function Home() {
                     : "border-stone-300 text-stone-700 hover:border-violet-500/50 hover:text-violet-300"
                 }`}
               >
-                Preview Micro-Action Savings Plan
+                {T[lang].preview}
               </button>
             </div>
 
             <div>
               <h2 className="font-serif mb-3 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Sparkles className="h-4 w-4 text-emerald-400" />
-                AI Financial Advisor
+                {T[lang].advisor}
               </h2>
               <AdvisorPanel
                 report={report}
@@ -889,7 +1010,7 @@ export default function Home() {
                 onToggleSimulatePlan={() => setSimulatePlan((prev) => !prev)}
                 onRunAi={runAiAnalysis}
                 totalPlanWeeklySaving={totalPlanWeeklySaving}
-                currencySymbol={CURRENCY_SYMBOLS[currency]}
+                currency={currency}
               />
             </div>
           </section>

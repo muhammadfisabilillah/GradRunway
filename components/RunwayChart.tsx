@@ -12,12 +12,13 @@ import {
   YAxis,
 } from "recharts";
 import type { MonthlyPoint } from "@/lib/financeEngine";
+import { type Currency, formatCurrency } from "@/lib/currency";
 
 interface RunwayChartProps {
   timeline: MonthlyPoint[];
   comparison?: MonthlyPoint[] | null;
   showComparison?: boolean;
-  currencySymbol?: string;
+  currency?: Currency;
 }
 
 const phaseColor: Record<MonthlyPoint["phase"], string> = {
@@ -32,16 +33,11 @@ interface ChartDatum {
   baselineBalance?: number;
 }
 
-function currency(value: number, symbol = "$"): string {
-  const sign = value < 0 ? "-" : "";
-  return `${sign}${symbol}${Math.abs(Math.round(value)).toLocaleString("en-US")}`;
-}
-
 export default function RunwayChart({
   timeline,
   comparison,
   showComparison = false,
-  currencySymbol = "$",
+  currency = "USD",
 }: RunwayChartProps) {
   const data: ChartDatum[] = useMemo(() => {
     return timeline.map((point) => {
@@ -120,7 +116,7 @@ export default function RunwayChart({
               tick={{ fill: "#78716c", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "#d6d3d1" }}
-              tickFormatter={(value: number) => currency(value, currencySymbol)}
+              tickFormatter={(value: number) => formatCurrency(value, currency)}
               width={70}
             />
             <Tooltip
@@ -132,7 +128,7 @@ export default function RunwayChart({
               }}
               labelStyle={{ color: "#1c1917", fontWeight: 600 }}
               formatter={(value: number, name: string) => [
-                currency(value, currencySymbol),
+                formatCurrency(value, currency),
                 name === "baselineBalance" ? "Micro-action plan" : "Projected balance",
               ]}
             />

@@ -9,6 +9,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { AIAdvisorReport } from "@/lib/presets";
+import { type Currency, formatCurrency } from "@/lib/currency";
 
 interface AdvisorPanelProps {
   report: AIAdvisorReport | null;
@@ -18,11 +19,7 @@ interface AdvisorPanelProps {
   onToggleSimulatePlan: () => void;
   onRunAi: () => void;
   totalPlanWeeklySaving: number;
-  currencySymbol?: string;
-}
-
-function currency(value: number, symbol = "$"): string {
-  return `${symbol}${Math.round(value).toLocaleString("en-US")}`;
+  currency?: Currency;
 }
 
 export default function AdvisorPanel({
@@ -33,7 +30,7 @@ export default function AdvisorPanel({
   onToggleSimulatePlan,
   onRunAi,
   totalPlanWeeklySaving,
-  currencySymbol = "$",
+  currency = "USD",
 }: AdvisorPanelProps) {
   if (loading) {
     return (
@@ -111,7 +108,7 @@ export default function AdvisorPanel({
                   {cost.title}
                 </p>
                 <span className="shrink-0 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
-                  {currency(cost.estimatedCost, currencySymbol)}
+                  formatCurrency(cost.estimatedCost, currency)
                 </span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
@@ -129,7 +126,7 @@ export default function AdvisorPanel({
             Small Money, Big Plan
           </h3>
           <span className="text-xs text-stone-500">
-            Total: {currency(totalPlanWeeklySaving, currencySymbol)}/wk
+            Total: formatCurrency(totalPlanWeeklySaving, currency)/wk
           </span>
         </div>
         <div className="flex flex-col gap-2.5">
@@ -143,7 +140,7 @@ export default function AdvisorPanel({
                   {action.action}
                 </p>
                 <span className="shrink-0 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
-                  {currency(action.weeklySaving, currencySymbol)}/wk
+                  formatCurrency(action.weeklySaving, currency)/wk
                 </span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">

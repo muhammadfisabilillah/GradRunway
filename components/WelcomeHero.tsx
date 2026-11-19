@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   ArrowRight,
   BarChart3,
@@ -15,6 +14,8 @@ import {
 interface WelcomeHeroProps {
   onStartGuided: () => void;
   onExploreDemos: () => void;
+  lang?: "en" | "id";
+  onLangChange?: (lang: "en" | "id") => void;
 }
 
 type Lang = "en" | "id";
@@ -101,8 +102,9 @@ const content = {
 export default function WelcomeHero({
   onStartGuided,
   onExploreDemos,
+  lang = "en",
+  onLangChange,
 }: WelcomeHeroProps) {
-  const [lang, setLang] = useState<Lang>("en");
   const t = content[lang];
 
   return (
@@ -119,7 +121,7 @@ export default function WelcomeHero({
             <div className="flex items-center rounded-full border border-stone-300 bg-white px-1">
               <button
                 type="button"
-                onClick={() => setLang("en")}
+                onClick={() => onLangChange?.("en")}
                 className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
                   lang === "en"
                     ? "bg-stone-900 text-white"
@@ -130,7 +132,7 @@ export default function WelcomeHero({
               </button>
               <button
                 type="button"
-                onClick={() => setLang("id")}
+                onClick={() => onLangChange?.("id")}
                 className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
                   lang === "id"
                     ? "bg-stone-900 text-white"
