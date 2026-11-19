@@ -653,6 +653,65 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-serif mb-3 flex items-center gap-2 text-sm font-semibold text-stone-900">
+                <Wallet className="h-4 w-4 text-sky-400" />
+                Budget Breakdown
+              </h2>
+              <div className="flex items-center gap-5">
+                <div className="relative h-28 w-28 shrink-0">
+                  <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e7e5e4" strokeWidth="3.5" />
+                    <circle
+                      cx="18" cy="18" r="15.5" fill="none"
+                      stroke="#10b981" strokeWidth="3.5"
+                      strokeDasharray={`${Math.min(100, (inputs.monthlyStudentIncome / Math.max(1, inputs.monthlyStudentIncome)) * 100)} 100`}
+                      strokeLinecap="round"
+                    />
+                    {inputs.monthlyStudentSpend > 0 && (
+                      <circle
+                        cx="18" cy="18" r="15.5" fill="none"
+                        stroke="#f59e0b" strokeWidth="3.5"
+                        strokeDasharray={`${Math.min(100, (inputs.monthlyStudentSpend / Math.max(1, inputs.monthlyStudentIncome)) * 100)} 100`}
+                        strokeDashoffset={`${-Math.min(100, (inputs.monthlyStudentIncome / Math.max(1, inputs.monthlyStudentIncome)) * 100)} 100`}
+                        strokeLinecap="round"
+                      />
+                    )}
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-stone-400">
+                      {inputs.monthlyStudentIncome > 0
+                        ? Math.round((inputs.monthlyStudentSpend / inputs.monthlyStudentIncome) * 100)
+                        : 0}
+                      %
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                    <span className="text-stone-500">Income</span>
+                    <span className="ml-auto font-bold text-stone-900">{formatCurrency(inputs.monthlyStudentIncome, currency)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                    <span className="text-stone-500">Spend</span>
+                    <span className="ml-auto font-bold text-stone-900">{formatCurrency(inputs.monthlyStudentSpend, currency)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 border-t border-stone-100 pt-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-stone-300" />
+                    <span className="text-stone-500">Net</span>
+                    <span className={`ml-auto font-bold ${inputs.monthlyStudentIncome - inputs.monthlyStudentSpend >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                      {formatCurrency(inputs.monthlyStudentIncome - inputs.monthlyStudentSpend, currency)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-[10px] text-stone-400">
+                {lang === "en" ? "Campus phase cash flow" : "Arus kas fase kampus"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <GraduationCap className="h-4 w-4 text-emerald-400" />
                 Graduation &amp; Relocation
