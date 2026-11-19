@@ -51,7 +51,7 @@ export default function DemoScenarios({
   onBack,
 }: DemoScenariosProps) {
   return (
-    <main className="min-h-screen bg-[#f5f0e8] text-stone-900">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
         <button
           type="button"

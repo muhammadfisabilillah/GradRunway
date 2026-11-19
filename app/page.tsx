@@ -359,7 +359,7 @@ export default function Home() {
     : 0;
 
   const navbar = (
-    <header className="sticky top-0 z-20 border-b border-stone-200 bg-[#f5f0e8]/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-stone-200 bg-[#faf8f5]/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <button
           type="button"
@@ -480,7 +480,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f0e8] text-stone-900">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       {navbar}
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">

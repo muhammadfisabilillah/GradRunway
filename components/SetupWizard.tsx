@@ -157,7 +157,7 @@ export default function SetupWizard({
   const isLast = step === wizardSteps.length - 1;
 
   return (
-    <main className="min-h-screen bg-[#f5f0e8] text-stone-900">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
         <button
           type="button"
