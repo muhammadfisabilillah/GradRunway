@@ -188,8 +188,9 @@ export default function WelcomeHero({
   const t = content[lang];
 
   return (
-    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
+    <main className="landing-bg min-h-screen text-stone-900">
+      <div className="dot-pattern pointer-events-none fixed inset-0 opacity-40" />
+      <div className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-900">

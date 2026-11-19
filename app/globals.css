@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
+  --background: #f5f0e8;
   --foreground: #1c1917;
   --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -87,4 +87,16 @@ input[type="range"]::-moz-range-thumb {
   background: #1c1917;
   cursor: pointer;
   border: 2px solid #faf8f5;
+}
+
+.landing-bg {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(120, 113, 108, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(120, 113, 108, 0.06) 0%, transparent 50%),
+    #f5f0e8;
+}
+
+.dot-pattern {
+  background-image: radial-gradient(circle, #d6d3d1 1px, transparent 1px);
+  background-size: 24px 24px;
 }
