@@ -162,6 +162,29 @@ function riskBadgeClass(riskLevel: string): string {
   return "bg-rose-500/15 text-rose-300";
 }
 
+interface KpiCardProps {
+  label: string;
+  tooltip: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconClass?: string;
+  children: React.ReactNode;
+}
+
+function KpiCard({ label, tooltip, icon: Icon, iconClass = "text-slate-500", children }: KpiCardProps) {
+  return (
+    <div className="group relative rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium text-slate-400">{label}</p>
+        <Icon className={`h-4 w-4 ${iconClass}`} />
+      </div>
+      {children}
+      <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-xl border border-slate-700 bg-slate-800 p-3 text-xs leading-relaxed text-slate-300 opacity-0 shadow-xl transition group-hover:opacity-100">
+        {tooltip}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>("welcome");
   const [inputs, setInputs] = useState<FinanceInputs>(DEFAULT_INPUTS);
@@ -385,13 +408,11 @@ export default function Home() {
         </div>
 
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-400">
-                Transition Readiness
-              </p>
-              <ShieldCheck className="h-4 w-4 text-slate-500" />
-            </div>
+          <KpiCard
+            label="Transition Readiness"
+            tooltip="Composite score (0-100) from runway days, buffer months, and cash-cliff penalties. Below 40 = high risk."
+            icon={ShieldCheck}
+          >
             <div className="mt-2 flex items-end gap-2">
               <span className="text-3xl font-bold tracking-tight">
                 {simulation.readinessScore}
@@ -416,15 +437,14 @@ export default function Home() {
                 style={{ width: `${simulation.readinessScore}%` }}
               />
             </div>
-          </div>
+          </KpiCard>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-400">
-                Post-Grad Monthly Burn
-              </p>
-              <Flame className="h-4 w-4 text-amber-400" />
-            </div>
+          <KpiCard
+            label="Post-Grad Monthly Burn"
+            tooltip="Your monthly cost after graduation: rent, food, transport, bills + fixed loan repayment."
+            icon={Flame}
+            iconClass="text-amber-400"
+          >
             <p className="mt-2 text-3xl font-bold tracking-tight">
               {currency(simulation.postGradBurnRate)}
               <span className="text-sm font-medium text-slate-500">/mo</span>
@@ -432,15 +452,13 @@ export default function Home() {
             <p className="mt-1 text-xs text-slate-500">
               Cost of living + loan repayment
             </p>
-          </div>
+          </KpiCard>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-400">
-                Lowest Projected Balance
-              </p>
-              <Wallet className="h-4 w-4 text-slate-500" />
-            </div>
+          <KpiCard
+            label="Lowest Projected Balance"
+            tooltip="The lowest cash balance across all 24 months. Negative = cash cliff, you run out of money."
+            icon={Wallet}
+          >
             <p
               className={`mt-2 text-3xl font-bold tracking-tight ${
                 simulation.lowestBalance < 0
@@ -453,17 +471,17 @@ export default function Home() {
             <p className="mt-1 text-xs text-slate-500">
               {simulation.lowestBalance < 0
                 ? "Cash cliff — negative balance projected"
-                : "Balance stays positive across 24 months"}
+                : "Balance stays positive across 24 months"
+              }
             </p>
-          </div>
+          </KpiCard>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-400">
-                Post-Grad Survival Buffer
-              </p>
-              <LifeBuoy className="h-4 w-4 text-sky-400" />
-            </div>
+          <KpiCard
+            label="Post-Grad Survival Buffer"
+            tooltip="How many days your savings last after graduation (after deposit), before your first paycheck arrives."
+            icon={LifeBuoy}
+            iconClass="text-sky-400"
+          >
             <p className="mt-2 text-3xl font-bold tracking-tight">
               {simulation.runwayDaysAfterGrad}
               <span className="text-sm font-medium text-slate-500"> days</span>
@@ -471,7 +489,7 @@ export default function Home() {
             <p className="mt-1 text-xs text-slate-500">
               Cash at grad covers burn after deposit
             </p>
-          </div>
+          </KpiCard>
         </section>
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(340px,420px)_1fr]">
