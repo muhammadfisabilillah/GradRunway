@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   ArrowRight,
   BarChart3,
-  ChevronDown,
   Globe,
   ShieldCheck,
   Sparkles,
@@ -99,6 +98,88 @@ const content = {
   },
 };
 
+const miniChartMonths = ["M-5", "M-4", "M-3", "M-2", "M-1", "Grad", "M+1", "M+2", "M+3", "M+4", "M+5", "M+6"];
+const miniBalances = [3200, 3300, 3400, 3500, 3600, 3700, 800, -200, -1200, 400, 1400, 2400];
+
+function MiniChart() {
+  const maxVal = 4000;
+  const minVal = -1500;
+  const range = maxVal - minVal;
+  const zeroY = ((maxVal - 0) / range) * 100;
+
+  const points = miniBalances.map((val, i) => {
+    const x = (i / (miniBalances.length - 1)) * 100;
+    const y = ((maxVal - val) / range) * 100;
+    return { x, y, val };
+  });
+
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
+  const areaPath = `M0,100 ${linePath.replace("M", "L")} L100,100 Z`;
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            24-Month Runway Preview
+          </p>
+          <p className="mt-0.5 text-xs text-stone-500">Sample: Metro HK persona</p>
+        </div>
+        <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-600">
+          CRITICAL
+        </span>
+      </div>
+
+      <div className="relative h-32">
+        <div
+          className="absolute left-0 right-0 border-t border-dashed border-rose-300"
+          style={{ top: `${zeroY}%` }}
+        >
+          <span className="absolute right-0 -top-4 text-[8px] font-bold text-rose-400">$0 cliff</span>
+        </div>
+
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
+          <defs>
+            <linearGradient id="miniArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
+          <path d={areaPath} fill="url(#miniArea)" />
+          <path d={linePath} fill="none" stroke="#10b981" strokeWidth="0.8" />
+          <circle
+            cx={points[7].x}
+            cy={points[7].y}
+            r="1.5"
+            fill="#f43f5e"
+          />
+        </svg>
+      </div>
+
+      <div className="mt-2 flex justify-between">
+        {miniChartMonths.map((m) => (
+          <span key={m} className="text-[8px] font-medium text-stone-400">{m}</span>
+        ))}
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className="rounded-lg bg-stone-50 p-2 text-center">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400">Burn</p>
+          <p className="font-serif text-sm font-bold text-stone-900">$2,150<span className="text-[10px] text-stone-400">/mo</span></p>
+        </div>
+        <div className="rounded-lg bg-rose-50 p-2 text-center">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-rose-400">Low</p>
+          <p className="font-serif text-sm font-bold text-rose-600">-$1,200</p>
+        </div>
+        <div className="rounded-lg bg-amber-50 p-2 text-center">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-amber-500">Runway</p>
+          <p className="font-serif text-sm font-bold text-amber-700">12<span className="text-[10px] text-amber-400"> days</span></p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WelcomeHero({
   onStartGuided,
   onExploreDemos,
@@ -181,22 +262,7 @@ export default function WelcomeHero({
             <p className="mt-4 text-[11px] text-stone-400">{t.footerNote}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {t.stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-xl border border-stone-200 bg-white p-5 text-center"
-              >
-                <p className="font-serif text-4xl font-bold tracking-tight text-stone-900">
-                  {stat.value}
-                </p>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                  {stat.unit}
-                </p>
-                <p className="mt-1.5 text-xs text-stone-500">{stat.label}</p>
-              </div>
-            ))}
-          </div>
+          <MiniChart />
         </div>
 
         <div className="mt-20">
@@ -204,12 +270,17 @@ export default function WelcomeHero({
             {lang === "en" ? "What makes GradRunway different" : "Apa yang membuat GradRunway beda"}
           </h2>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {t.features.map((feature) => (
+            {t.features.map((feature, i) => (
               <div
                 key={feature.title}
-                className="rounded-xl border border-stone-200 bg-white p-5"
+                className="group relative overflow-hidden rounded-xl border border-stone-200 bg-white p-5 transition hover:border-stone-300 hover:shadow-md"
               >
-                <feature.icon className="h-5 w-5 text-stone-700" />
+                <div className={`absolute top-0 left-0 h-1 w-full ${
+                  i === 0 ? "bg-emerald-400" : i === 1 ? "bg-amber-400" : i === 2 ? "bg-violet-400" : "bg-sky-400"
+                }`} />
+                <feature.icon className={`h-5 w-5 ${
+                  i === 0 ? "text-emerald-600" : i === 1 ? "text-amber-600" : i === 2 ? "text-violet-600" : "text-sky-600"
+                }`} />
                 <h3 className="mt-3 text-sm font-bold text-stone-900">{feature.title}</h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">{feature.text}</p>
               </div>
