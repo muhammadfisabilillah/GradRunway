@@ -21,10 +21,13 @@ export interface AIAdvisorReport {
   source: "llm" | "smart-fallback";
 }
 
+export type Currency = "USD" | "HKD" | "IDR";
+
 export interface StudentPreset {
   id: string;
   label: string;
   blurb: string;
+  currency: Currency;
   inputs: FinanceInputs;
   cachedReport: AIAdvisorReport;
 }
@@ -242,6 +245,7 @@ export const STUDENT_PRESETS: StudentPreset[] = [
     label: "Metro / HK Fresh Grad",
     blurb:
       "High security deposit, lost meal & transit subsidies, pricey city job hunt.",
+    currency: "USD",
     inputs: metroHkInputs,
     cachedReport: buildMetroHkReport(),
   },
@@ -250,6 +254,7 @@ export const STUDENT_PRESETS: StudentPreset[] = [
     label: "Tech Grad w/ Student Loan",
     blurb:
       "Strong salary offset by a monthly loan repayment and deposit costs.",
+    currency: "USD",
     inputs: techLoanInputs,
     cachedReport: buildTechLoanReport(),
   },
@@ -258,8 +263,78 @@ export const STUDENT_PRESETS: StudentPreset[] = [
     label: "Bootstrapped Side-Hustler",
     blurb:
       "Real side income, lower savings, and a longer job hunt to survive.",
+    currency: "USD",
     inputs: sideHustlerInputs,
     cachedReport: buildSideHustlerReport(),
+  },
+  {
+    id: "polyu-local",
+    label: "PolyU Local Student",
+    blurb:
+      "HK local grad: HKD 15k salary, HKD 10k deposit, HKD 2k loan repayment.",
+    currency: "HKD",
+    inputs: {
+      currentSavings: 20000,
+      monthlyStudentIncome: 5000,
+      monthlyStudentSpend: 4200,
+      monthsUntilGraduation: 6,
+      expectedStartingSalary: 15000,
+      jobSearchMonths: 2,
+      postGradMonthlyCost: 8500,
+      upfrontMovingDeposit: 10000,
+      monthlyLoanRepayment: 2000,
+      delayedJobOffer: false,
+      salaryCut20Percent: false,
+      emergencyShock: false,
+    },
+    cachedReport: {
+      executiveSummary:
+        "Your HKD 15k starting salary looks comfortable, but the HKD 10k deposit plus HKD 10.5k/mo burn rate leaves only 38 days of runway. The 2-month job hunt in Hong Kong's rental market is your highest-risk window.",
+      hiddenCostsAlert: [
+        {
+          title: "Rental deposit + first month (2+1)",
+          estimatedCost: 10000,
+          reason:
+            "HK landlords typically require 2 months deposit + 1 month advance rent before move-in, draining HKD 10k+ before your first paycheck.",
+        },
+        {
+          title: "Loss of JUPAS subsidies & student transport",
+          estimatedCost: 600,
+          reason:
+            "Student Travel Scheme and subsidised campus dining end at graduation, silently raising your monthly transport and food costs.",
+        },
+        {
+          title: "Loan grace period ending",
+          estimatedCost: 2000,
+          reason:
+            "Your HKD 2k/mo student loan repayment begins 6 months post-graduation, adding a fixed drain during the job hunt.",
+        },
+      ],
+      microActionPlan: [
+        {
+          action: "Negotiate 1-month deposit waiver or split payment",
+          weeklySaving: 200,
+          extraRunwayDays: 8,
+          impactSummary:
+            "Freeing HKD 4k of deposit over two installments keeps cash liquid during your highest-risk month.",
+        },
+        {
+          action: "Apply for income-driven repayment before grace ends",
+          weeklySaving: 150,
+          extraRunwayDays: 6,
+          impactSummary:
+            "Lowering the HKD 2k/mo loan payment in lean months protects your runway at graduation.",
+        },
+        {
+          action: "Take one paid tutoring or freelance gig per week",
+          weeklySaving: 300,
+          extraRunwayDays: 12,
+          impactSummary:
+            "HK$300/week bridge income continues while you hunt and offsets the HKD 10.5k/mo burn rate.",
+        },
+      ],
+      source: "smart-fallback",
+    },
   },
 ];
 

@@ -5,13 +5,14 @@ import type { SimulationResult } from "@/lib/financeEngine";
 
 interface VerdictBannerProps {
   simulation: SimulationResult;
+  currencySymbol?: string;
 }
 
-function currency(value: number): string {
-  return `$${Math.round(Math.abs(value)).toLocaleString("en-US")}`;
+function formatCurrency(value: number, symbol: string): string {
+  return `${symbol}${Math.round(Math.abs(value)).toLocaleString("en-US")}`;
 }
 
-export default function VerdictBanner({ simulation }: VerdictBannerProps) {
+export default function VerdictBanner({ simulation, currencySymbol = "$" }: VerdictBannerProps) {
   const { riskLevel, runwayDaysAfterGrad, zeroCashMonth, lowestBalance } =
     simulation;
 
@@ -35,7 +36,7 @@ export default function VerdictBanner({ simulation }: VerdictBannerProps) {
     icon = AlertTriangle;
     heading = "Graduation Cliff Alert";
     body = zeroCashMonth
-      ? `Your cash runs out in ${zeroCashMonth} due to upfront rent deposit and job-hunt burn. You would hit ${currency(lowestBalance)} at the low point.`
+      ? `Your cash runs out in ${zeroCashMonth} due to upfront rent deposit and job-hunt burn. You would hit ${formatCurrency(lowestBalance, currencySymbol)} at the low point.`
       : `Your runway is dangerously short — only ${runwayDaysAfterGrad} days of cash after graduation. Act before the deposit is due.`;
   }
 

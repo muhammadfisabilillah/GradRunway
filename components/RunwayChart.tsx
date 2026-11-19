@@ -17,6 +17,7 @@ interface RunwayChartProps {
   timeline: MonthlyPoint[];
   comparison?: MonthlyPoint[] | null;
   showComparison?: boolean;
+  currencySymbol?: string;
 }
 
 const phaseColor: Record<MonthlyPoint["phase"], string> = {
@@ -31,15 +32,16 @@ interface ChartDatum {
   baselineBalance?: number;
 }
 
-function currency(value: number): string {
+function currency(value: number, symbol = "$"): string {
   const sign = value < 0 ? "-" : "";
-  return `${sign}$${Math.abs(Math.round(value)).toLocaleString("en-US")}`;
+  return `${sign}${symbol}${Math.abs(Math.round(value)).toLocaleString("en-US")}`;
 }
 
 export default function RunwayChart({
   timeline,
   comparison,
   showComparison = false,
+  currencySymbol = "$",
 }: RunwayChartProps) {
   const data: ChartDatum[] = useMemo(() => {
     return timeline.map((point) => {
@@ -118,7 +120,7 @@ export default function RunwayChart({
               tick={{ fill: "#64748b", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "#1e293b" }}
-              tickFormatter={(value: number) => currency(value)}
+              tickFormatter={(value: number) => currency(value, currencySymbol)}
               width={70}
             />
             <Tooltip
@@ -130,7 +132,7 @@ export default function RunwayChart({
               }}
               labelStyle={{ color: "#e2e8f0", fontWeight: 600 }}
               formatter={(value: number, name: string) => [
-                currency(value),
+                currency(value, currencySymbol),
                 name === "baselineBalance" ? "Micro-action plan" : "Projected balance",
               ]}
             />

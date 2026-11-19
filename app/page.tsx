@@ -32,10 +32,23 @@ import {
 import {
   STUDENT_PRESETS,
   type AIAdvisorReport,
+  type Currency,
   type StudentPreset,
 } from "@/lib/presets";
 
 type ViewMode = "welcome" | "guide" | "demo" | "wizard" | "dashboard";
+
+const CURRENCY_SYMBOLS: Record<Currency, string> = {
+  USD: "$",
+  HKD: "HK$",
+  IDR: "Rp",
+};
+
+const CURRENCY_LOCALES: Record<Currency, string> = {
+  USD: "en-US",
+  HKD: "en-HK",
+  IDR: "id-ID",
+};
 
 interface SliderRowProps {
   label: string;
@@ -141,9 +154,11 @@ function ToggleRow({ label, hint, checked, delta, onChange }: ToggleRowProps) {
   );
 }
 
-function currency(value: number): string {
+function formatCurrency(value: number, curr: Currency = "USD"): string {
   const sign = value < 0 ? "-" : "";
-  return `${sign}$${Math.abs(Math.round(value)).toLocaleString("en-US")}`;
+  const symbol = CURRENCY_SYMBOLS[curr];
+  const locale = CURRENCY_LOCALES[curr];
+  return `${sign}${symbol}${Math.abs(Math.round(value)).toLocaleString(locale)}`;
 }
 
 function hashString(value: string): string {
@@ -194,6 +209,7 @@ export default function Home() {
   const [simulatePlan, setSimulatePlan] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [wizardInputs, setWizardInputs] = useState<FinanceInputs>(DEFAULT_INPUTS);
+  const [currency, setCurrency] = useState<Currency>("USD");
 
   const simulation: SimulationResult = useMemo(
     () => simulateTimeline(inputs),
@@ -235,6 +251,7 @@ export default function Home() {
     setActivePreset(preset.id);
     setError(null);
     setSimulatePlan(false);
+    setCurrency(preset.currency);
     setViewMode("dashboard");
   }, []);
 
@@ -336,13 +353,31 @@ export default function Home() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {viewMode === "dashboard" && (
-            <button
-              type="button"
-              onClick={() => setViewMode("welcome")}
-              className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-emerald-500/50 hover:text-emerald-300"
-            >
-              Back to Setup / Scenarios
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => setViewMode("welcome")}
+                className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-emerald-500/50 hover:text-emerald-300"
+              >
+                Back to Setup / Scenarios
+              </button>
+              <div className="flex items-center rounded-full border border-slate-700 bg-slate-900/60 px-1">
+                {(["USD", "HKD", "IDR"] as Currency[]).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCurrency(c)}
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+                      currency === c
+                        ? "bg-emerald-500/20 text-emerald-300"
+                        : "text-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </>
           )}
           {STUDENT_PRESETS.map((preset) => (
             <button
@@ -446,7 +481,7 @@ export default function Home() {
             iconClass="text-amber-400"
           >
             <p className="mt-2 text-3xl font-bold tracking-tight">
-              {currency(simulation.postGradBurnRate)}
+              {formatCurrency(simulation.postGradBurnRate, currency)}
               <span className="text-sm font-medium text-slate-500">/mo</span>
             </p>
             <p className="mt-1 text-xs text-slate-500">
@@ -466,7 +501,7 @@ export default function Home() {
                   : "text-slate-100"
               }`}
             >
-              {currency(simulation.lowestBalance)}
+              {formatCurrency(simulation.lowestBalance, currency)}
             </p>
             <p className="mt-1 text-xs text-slate-500">
               {simulation.lowestBalance < 0
@@ -665,7 +700,7 @@ export default function Home() {
           </section>
 
           <section className="flex flex-col gap-5">
-            <VerdictBanner simulation={simulation} />
+            <VerdictBanner simulation={simulation} currencySymbol={CURRENCY_SYMBOLS[currency]} />
 
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
@@ -683,6 +718,7 @@ export default function Home() {
                 timeline={simulation.timeline}
                 comparison={overlayTimeline}
                 showComparison={simulatePlan}
+                currencySymbol={CURRENCY_SYMBOLS[currency]}
               />
               <button
                 type="button"
@@ -710,6 +746,7 @@ export default function Home() {
                 onToggleSimulatePlan={() => setSimulatePlan((prev) => !prev)}
                 onRunAi={runAiAnalysis}
                 totalPlanWeeklySaving={totalPlanWeeklySaving}
+                currencySymbol={CURRENCY_SYMBOLS[currency]}
               />
             </div>
           </section>

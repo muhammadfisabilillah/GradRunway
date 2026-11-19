@@ -18,10 +18,11 @@ interface AdvisorPanelProps {
   onToggleSimulatePlan: () => void;
   onRunAi: () => void;
   totalPlanWeeklySaving: number;
+  currencySymbol?: string;
 }
 
-function currency(value: number): string {
-  return `$${Math.round(value).toLocaleString("en-US")}`;
+function currency(value: number, symbol = "$"): string {
+  return `${symbol}${Math.round(value).toLocaleString("en-US")}`;
 }
 
 export default function AdvisorPanel({
@@ -32,6 +33,7 @@ export default function AdvisorPanel({
   onToggleSimulatePlan,
   onRunAi,
   totalPlanWeeklySaving,
+  currencySymbol = "$",
 }: AdvisorPanelProps) {
   if (loading) {
     return (
@@ -109,7 +111,7 @@ export default function AdvisorPanel({
                   {cost.title}
                 </p>
                 <span className="shrink-0 rounded-md bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-300">
-                  {currency(cost.estimatedCost)}
+                  {currency(cost.estimatedCost, currencySymbol)}
                 </span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
@@ -127,7 +129,7 @@ export default function AdvisorPanel({
             Small Money, Big Plan
           </h3>
           <span className="text-xs text-slate-400">
-            Total: {currency(totalPlanWeeklySaving)}/wk
+            Total: {currency(totalPlanWeeklySaving, currencySymbol)}/wk
           </span>
         </div>
         <div className="flex flex-col gap-2.5">
@@ -141,7 +143,7 @@ export default function AdvisorPanel({
                   {action.action}
                 </p>
                 <span className="shrink-0 rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">
-                  {currency(action.weeklySaving)}/wk
+                  {currency(action.weeklySaving, currencySymbol)}/wk
                 </span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-slate-400">

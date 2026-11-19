@@ -20,12 +20,14 @@ const personaAccents: Record<string, string> = {
   "metro-hk": "from-rose-400 to-orange-400",
   "tech-loan": "from-sky-400 to-indigo-400",
   "side-hustler": "from-emerald-400 to-teal-400",
+  "polyu-local": "from-violet-400 to-purple-400",
 };
 
 const personaIcons: Record<string, typeof Building2> = {
   "metro-hk": Building2,
   "tech-loan": GraduationCap,
   "side-hustler": PiggyBank,
+  "polyu-local": GraduationCap,
 };
 
 const personaStories: Record<string, string> = {
@@ -35,10 +37,12 @@ const personaStories: Record<string, string> = {
     "Strong starting salary, but a $350/mo loan repayment locks in a fixed drain exactly when cash is tightest during the job hunt.",
   "side-hustler":
     "Real freelance income, thin savings, and a longer 4-month job hunt. Bridge work keeps cash flowing, but taxes and gaps bite.",
+  "polyu-local":
+    "HK PolyU grad: HKD 15k/month salary, HKD 10k rental deposit (2+1), HKD 2k/mo loan. The 2-month HK job hunt + highest rents in Asia = tightest runway.",
 };
 
-function currency(value: number): string {
-  return `$${Math.round(value).toLocaleString("en-US")}`;
+function currency(value: number, symbol = "$"): string {
+  return `${symbol}${Math.round(value).toLocaleString("en-US")}`;
 }
 
 export default function DemoScenarios({
@@ -67,9 +71,10 @@ export default function DemoScenarios({
           this is the fastest path to the demo.
         </p>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
           {presets.map((preset) => {
             const Icon = personaIcons[preset.id] ?? Wallet;
+            const symbol = preset.currency === "HKD" ? "HK$" : "$";
             return (
               <button
                 key={preset.id}
@@ -97,13 +102,13 @@ export default function DemoScenarios({
                 <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] text-slate-500">
                   <span className="rounded-lg bg-slate-800/70 px-2.5 py-2">
                     <span className="block font-semibold text-slate-200">
-                      {currency(preset.inputs.currentSavings)}
+                      {currency(preset.inputs.currentSavings, symbol)}
                     </span>
                     savings
                   </span>
                   <span className="rounded-lg bg-slate-800/70 px-2.5 py-2">
                     <span className="block font-semibold text-slate-200">
-                      {currency(preset.inputs.expectedStartingSalary)}
+                      {currency(preset.inputs.expectedStartingSalary, symbol)}
                     </span>
                     starting salary
                   </span>
