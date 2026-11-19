@@ -157,12 +157,12 @@ export default function SetupWizard({
   const isLast = step === wizardSteps.length - 1;
 
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
         <button
           type="button"
           onClick={onBack}
-          className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-emerald-300"
+          className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-stone-500 transition hover:text-emerald-300"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to welcome
@@ -176,8 +176,8 @@ export default function SetupWizard({
                   index < step
                     ? "bg-emerald-500 text-emerald-950"
                     : index === step
-                      ? "bg-emerald-500/15 text-emerald-300"
-                      : "bg-slate-800 text-slate-500"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-stone-100 text-stone-400"
                 }`}
               >
                 {index < step ? <Check className="h-3.5 w-3.5" /> : index + 1}
@@ -185,7 +185,7 @@ export default function SetupWizard({
               {index < wizardSteps.length - 1 && (
                 <span
                   className={`h-0.5 flex-1 rounded-full ${
-                    index < step ? "bg-emerald-500" : "bg-slate-800"
+                    index < step ? "bg-emerald-500" : "bg-stone-200"
                   }`}
                 />
               )}
@@ -193,14 +193,14 @@ export default function SetupWizard({
           ))}
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+        <div className="rounded-2xl border border-stone-200 bg-white p-6">
           <div className="mb-1 flex items-center gap-2">
             <current.icon className="h-5 w-5 text-emerald-400" />
-            <h2 className="text-lg font-bold tracking-tight">
+            <h2 className="font-serif text-lg font-bold tracking-tight">
               {current.title}
             </h2>
           </div>
-          <p className="mb-6 text-xs leading-relaxed text-slate-400">
+          <p className="mb-6 text-xs leading-relaxed text-stone-500">
             {current.blurb}
           </p>
 
@@ -208,11 +208,11 @@ export default function SetupWizard({
             {current.fields.map((field) => (
               <div key={field.key} className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-3">
-                  <label className="text-xs font-medium text-slate-300">
+                  <label className="text-xs font-medium text-stone-700">
                     {field.label}
                   </label>
-                  <div className="flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-900 px-2 py-1">
-                    <span className="text-xs text-slate-500">
+                  <div className="flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2 py-1">
+                    <span className="text-xs text-stone-400">
                       {field.prefix ?? ""}
                     </span>
                     <input
@@ -227,9 +227,9 @@ export default function SetupWizard({
                           Number(e.target.value) as FinanceInputs[typeof field.key],
                         )
                       }
-                      className="w-16 bg-transparent text-right text-xs font-semibold text-slate-100 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="w-16 bg-transparent text-right text-xs font-semibold text-stone-900 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-stone-400">
                       {field.suffix ?? ""}
                     </span>
                   </div>
@@ -248,7 +248,7 @@ export default function SetupWizard({
                   }
                   className="w-full"
                 />
-                <p className="text-[11px] leading-relaxed text-slate-500">
+                <p className="text-[11px] leading-relaxed text-stone-400">
                   {field.helper}
                 </p>
               </div>
@@ -260,7 +260,7 @@ export default function SetupWizard({
               type="button"
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 px-4 py-2.5 text-xs font-semibold text-slate-300 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-stone-300 px-4 py-2.5 text-xs font-semibold text-stone-700 transition hover:border-stone-400 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -285,7 +285,7 @@ export default function SetupWizard({
           </div>
         </div>
 
-        <p className="mt-4 text-center text-[11px] text-slate-500">
+        <p className="mt-4 text-center text-[11px] text-stone-400">
           Step {step + 1} of {wizardSteps.length} — you can change everything
           later.
         </p>

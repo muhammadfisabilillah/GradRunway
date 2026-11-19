@@ -41,9 +41,9 @@ export default function VerdictBanner({ simulation, currencySymbol = "$" }: Verd
   }
 
   const styles: Record<typeof tone, string> = {
-    safe: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-    moderate: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-    critical: "border-rose-500/30 bg-rose-500/10 text-rose-300",
+    safe: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    moderate: "border-amber-200 bg-amber-50 text-amber-700",
+    critical: "border-rose-200 bg-rose-50 text-rose-700",
   };
 
   const Icon = icon;
@@ -55,7 +55,7 @@ export default function VerdictBanner({ simulation, currencySymbol = "$" }: Verd
       <Icon className="mt-0.5 h-5 w-5 shrink-0" />
       <div>
         <p className="text-sm font-bold">{heading}</p>
-        <p className="mt-0.5 text-xs leading-relaxed text-slate-300">{body}</p>
+        <p className="mt-0.5 text-xs leading-relaxed text-stone-600">{body}</p>
       </div>
     </div>
   );

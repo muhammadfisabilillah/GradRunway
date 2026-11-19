@@ -38,20 +38,20 @@ export default function WelcomeHero({
   onExploreDemos,
 }: WelcomeHeroProps) {
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       <div className="mx-auto flex max-w-5xl flex-col items-center px-4 py-12 text-center sm:px-6 sm:py-20">
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-sky-500 shadow-lg shadow-emerald-500/20">
-          <Calculator className="h-8 w-8 text-slate-950" />
+          <Calculator className="h-8 w-8 text-stone-950" />
         </div>
 
-        <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-5xl">
           Know your cash runway
           <span className="block bg-gradient-to-r from-emerald-300 via-sky-300 to-emerald-300 bg-clip-text text-transparent">
             before graduation does.
           </span>
         </h1>
 
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-stone-500 sm:text-base">
           GradRunway turns your student finances into a 24-month cash
           simulation, stress-tests the scary what-ifs, and hands you a tiny
           action plan that adds real runway days.
@@ -61,20 +61,20 @@ export default function WelcomeHero({
           {steps.map((step, index) => (
             <div
               key={step.title}
-              className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 text-left"
+              className="rounded-2xl border border-stone-200 bg-white p-5 text-left"
             >
               <div className="mb-3 flex items-center justify-between">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-300">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
                   <step.icon className="h-4 w-4" />
                 </span>
-                <span className="text-xs font-bold text-slate-600">
+                <span className="text-xs font-bold text-stone-400">
                   0{index + 1}
                 </span>
               </div>
-              <p className="text-sm font-semibold text-slate-100">
+              <p className="text-sm font-semibold text-stone-900">
                 {step.title}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-slate-400">
+              <p className="mt-1 text-xs leading-relaxed text-stone-500">
                 {step.text}
               </p>
             </div>
@@ -94,14 +94,14 @@ export default function WelcomeHero({
           <button
             type="button"
             onClick={onExploreDemos}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-4 text-sm font-bold text-slate-100 transition hover:border-emerald-500/50 hover:text-emerald-300"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-6 py-4 text-sm font-bold text-stone-900 transition hover:border-emerald-500/50 hover:text-emerald-300"
           >
             <LifeBuoy className="h-4 w-4" />
             Explore Instant Demo Scenarios
           </button>
         </div>
 
-        <p className="mt-6 text-[11px] text-slate-500">
+        <p className="mt-6 text-[11px] text-stone-400">
           No login. No bank data. Your numbers stay in your browser.
         </p>
       </div>

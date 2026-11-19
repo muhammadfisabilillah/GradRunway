@@ -60,7 +60,7 @@ export default function RunwayChart({
 
   return (
     <div className="w-full">
-      <div className="mb-3 flex flex-wrap items-center gap-4 text-xs text-slate-400">
+      <div className="mb-3 flex flex-wrap items-center gap-4 text-xs text-stone-500">
         <span className="flex items-center gap-1.5">
           <span
             className="inline-block h-2.5 w-2.5 rounded-full"
@@ -107,30 +107,30 @@ export default function RunwayChart({
                 <stop offset="95%" stopColor="#a78bfa" stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
             <XAxis
               dataKey="monthLabel"
-              tick={{ fill: "#64748b", fontSize: 11 }}
+              tick={{ fill: "#78716c", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#1e293b" }}
+              axisLine={{ stroke: "#d6d3d1" }}
               interval="preserveStartEnd"
               minTickGap={16}
             />
             <YAxis
-              tick={{ fill: "#64748b", fontSize: 11 }}
+              tick={{ fill: "#78716c", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#1e293b" }}
+              axisLine={{ stroke: "#d6d3d1" }}
               tickFormatter={(value: number) => currency(value, currencySymbol)}
               width={70}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#0f172a",
-                border: "1px solid #1e293b",
+                backgroundColor: "#ffffff",
+                border: "1px solid #d6d3d1",
                 borderRadius: 12,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#e2e8f0", fontWeight: 600 }}
+              labelStyle={{ color: "#1c1917", fontWeight: 600 }}
               formatter={(value: number, name: string) => [
                 currency(value, currencySymbol),
                 name === "baselineBalance" ? "Micro-action plan" : "Projected balance",

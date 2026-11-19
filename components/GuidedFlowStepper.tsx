@@ -16,8 +16,8 @@ const stages = [
 
 export default function GuidedFlowStepper({ activeStage }: GuidedFlowStepperProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-3 sm:p-4">
-      <p className="mb-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+    <div className="rounded-2xl border border-stone-200 bg-white p-3 sm:p-4">
+      <p className="mb-2.5 text-[10px] font-bold uppercase tracking-wider text-stone-400">
         How to use — guided flow
       </p>
       <ol className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -29,10 +29,10 @@ export default function GuidedFlowStepper({ activeStage }: GuidedFlowStepperProp
               key={stage.id}
               className={`flex items-center gap-2.5 rounded-xl border px-3 py-2 transition ${
                 active
-                  ? "border-emerald-500/40 bg-emerald-500/10"
+                  ? "border-emerald-300 bg-emerald-50"
                   : done
-                    ? "border-slate-800 bg-slate-900/40"
-                    : "border-slate-800/60 bg-transparent"
+                    ? "border-stone-200 bg-stone-50"
+                    : "border-stone-200 bg-transparent"
               }`}
             >
               <span
@@ -40,8 +40,8 @@ export default function GuidedFlowStepper({ activeStage }: GuidedFlowStepperProp
                   done
                     ? "bg-emerald-500 text-emerald-950"
                     : active
-                      ? "bg-emerald-500/20 text-emerald-300"
-                      : "bg-slate-800 text-slate-500"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-stone-100 text-stone-400"
                 }`}
               >
                 {done ? <Check className="h-3.5 w-3.5" /> : stage.id}
@@ -49,12 +49,12 @@ export default function GuidedFlowStepper({ activeStage }: GuidedFlowStepperProp
               <span className="min-w-0">
                 <span
                   className={`block text-xs font-semibold ${
-                    active || done ? "text-slate-100" : "text-slate-400"
+                    active || done ? "text-stone-900" : "text-stone-500"
                   }`}
                 >
                   {stage.title}
                 </span>
-                <span className="block truncate text-[10px] text-slate-500">
+                <span className="block truncate text-[10px] text-stone-400">
                   {stage.hint}
                 </span>
               </span>

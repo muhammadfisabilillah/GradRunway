@@ -77,9 +77,9 @@ function SliderRow({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-3">
-        <label className="text-xs font-medium text-slate-300">{label}</label>
-        <div className="flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-900 px-2 py-1">
-          <span className="text-xs text-slate-500">{prefix}</span>
+        <label className="text-xs font-medium text-stone-700">{label}</label>
+        <div className="flex items-center gap-1 rounded-lg border border-stone-300 bg-white px-2 py-1">
+          <span className="text-xs text-stone-400">{prefix}</span>
           <input
             type="number"
             value={value}
@@ -87,9 +87,9 @@ function SliderRow({
             max={max}
             step={step}
             onChange={(e) => onChange(Number(e.target.value))}
-            className="w-16 bg-transparent text-right text-xs font-semibold text-slate-100 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-16 bg-transparent text-right text-xs font-semibold text-stone-900 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
-          <span className="text-xs text-slate-500">{suffix}</span>
+          <span className="text-xs text-stone-400">{suffix}</span>
         </div>
       </div>
       <input
@@ -102,7 +102,7 @@ function SliderRow({
         className="w-full"
       />
       {helper && (
-        <p className="text-[11px] leading-relaxed text-slate-500">{helper}</p>
+        <p className="text-[11px] leading-relaxed text-stone-400">{helper}</p>
       )}
     </div>
   );
@@ -125,24 +125,24 @@ function ToggleRow({ label, hint, checked, delta, onChange }: ToggleRowProps) {
       onClick={() => onChange(!checked)}
       className={`flex w-full items-center justify-between gap-3 rounded-xl border px-3.5 py-3 text-left transition ${
         checked
-          ? "border-rose-500/40 bg-rose-500/10"
-          : "border-slate-800 bg-slate-900/40 hover:border-slate-700"
+          ? "border-rose-300 bg-rose-50"
+          : "border-stone-200 bg-stone-50 hover:border-stone-300"
       }`}
     >
       <span>
-        <span className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+        <span className="flex items-center gap-2 text-sm font-semibold text-stone-900">
           {label}
           {checked && delta !== undefined && delta !== null && delta < 0 && (
-            <span className="inline-flex items-center rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-rose-300">
+            <span className="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-300">
               {delta} days
             </span>
           )}
         </span>
-        <span className="block text-xs text-slate-400">{hint}</span>
+        <span className="block text-xs text-stone-500">{hint}</span>
       </span>
       <span
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${
-          checked ? "bg-rose-500" : "bg-slate-700"
+          checked ? "bg-rose-500" : "bg-stone-300"
         }`}
       >
         <span
@@ -173,9 +173,9 @@ function hashString(value: string): string {
 }
 
 function riskBadgeClass(riskLevel: string): string {
-  if (riskLevel === "SAFE") return "bg-emerald-500/15 text-emerald-300";
-  if (riskLevel === "MODERATE") return "bg-amber-500/15 text-amber-300";
-  return "bg-rose-500/15 text-rose-300";
+  if (riskLevel === "SAFE") return "bg-emerald-100 text-emerald-700";
+  if (riskLevel === "MODERATE") return "bg-amber-100 text-amber-700";
+  return "bg-rose-100 text-rose-700";
 }
 
 interface KpiCardProps {
@@ -186,15 +186,15 @@ interface KpiCardProps {
   children: React.ReactNode;
 }
 
-function KpiCard({ label, tooltip, icon: Icon, iconClass = "text-slate-500", children }: KpiCardProps) {
+function KpiCard({ label, tooltip, icon: Icon, iconClass = "text-stone-400", children }: KpiCardProps) {
   return (
-    <div className="group relative rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+    <div className="group relative rounded-2xl border border-stone-200 bg-white p-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-slate-400">{label}</p>
+        <p className="text-xs font-medium text-stone-500">{label}</p>
         <Icon className={`h-4 w-4 ${iconClass}`} />
       </div>
       {children}
-      <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-xl border border-slate-700 bg-slate-800 p-3 text-xs leading-relaxed text-slate-300 opacity-0 shadow-xl transition group-hover:opacity-100">
+      <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-xl border border-stone-300 bg-stone-100 p-3 text-xs leading-relaxed text-stone-700 opacity-0 shadow-xl transition group-hover:opacity-100">
         {tooltip}
       </div>
     </div>
@@ -358,15 +358,15 @@ export default function Home() {
     : 0;
 
   const navbar = (
-    <header className="sticky top-0 z-20 border-b border-slate-800 bg-[#0b1120]/85 backdrop-blur">
+        <header className="sticky top-0 z-20 border-b border-stone-200 bg-[#faf8f5]/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500">
-            <GraduationCap className="h-5 w-5 text-slate-950" />
+            <GraduationCap className="h-5 w-5 text-stone-950" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight">GradRunway</h1>
-            <p className="text-xs text-slate-400">
+            <h1 className="font-serif text-lg font-bold tracking-tight">GradRunway</h1>
+            <p className="text-xs text-stone-500">
               Small Money, Big Plan — Campus-to-Career Financial Stress-Tester
             </p>
           </div>
@@ -384,7 +384,7 @@ export default function Home() {
                   setSimulatePlan(false);
                   setCurrency("USD");
                 }}
-                className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rose-500/50 hover:text-rose-300"
+                className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-semibold text-stone-700 transition hover:border-rose-500/50 hover:text-rose-300"
                 title="Reset all inputs and report to defaults"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
@@ -392,11 +392,11 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setViewMode("welcome")}
-                className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-emerald-500/50 hover:text-emerald-300"
+                className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-semibold text-stone-700 transition hover:border-emerald-500/50 hover:text-emerald-300"
               >
                 Back to Setup / Scenarios
               </button>
-              <div className="flex items-center rounded-full border border-slate-700 bg-slate-900/60 px-1">
+              <div className="flex items-center rounded-full border border-stone-300 bg-white px-1">
                 {(["USD", "HKD", "IDR"] as Currency[]).map((c) => (
                   <button
                     key={c}
@@ -404,8 +404,8 @@ export default function Home() {
                     onClick={() => setCurrency(c)}
                     className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
                       currency === c
-                        ? "bg-emerald-500/20 text-emerald-300"
-                        : "text-slate-500 hover:text-slate-300"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "text-stone-500 hover:text-stone-700"
                     }`}
                   >
                     {c}
@@ -421,8 +421,8 @@ export default function Home() {
               onClick={() => applyPreset(preset)}
               className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
                 activePreset === preset.id
-                  ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-                  : "border-slate-700 bg-slate-900/60 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300"
+                  ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                  : "border-stone-300 bg-white text-stone-700 hover:border-emerald-500/50 hover:text-emerald-300"
               }`}
             >
               {preset.label}
@@ -469,7 +469,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900">
       {navbar}
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
@@ -478,15 +478,15 @@ export default function Home() {
         </div>
 
         {stressDiff.hasStress && (
-          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-rose-300">
+          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-rose-700">
               Stress-Test Impact
             </span>
             {stressDiff.runwayDiff !== 0 && (
               <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                 stressDiff.runwayDiff < 0
-                  ? "bg-rose-500/15 text-rose-300"
-                  : "bg-emerald-500/15 text-emerald-300"
+                  ? "bg-rose-100 text-rose-700"
+                  : "bg-emerald-100 text-emerald-700"
               }`}>
                 Runway {stressDiff.runwayDiff > 0 ? "+" : ""}{stressDiff.runwayDiff} days
               </span>
@@ -494,8 +494,8 @@ export default function Home() {
             {stressDiff.balanceDiff !== 0 && (
               <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                 stressDiff.balanceDiff < 0
-                  ? "bg-rose-500/15 text-rose-300"
-                  : "bg-emerald-500/15 text-emerald-300"
+                  ? "bg-rose-100 text-rose-700"
+                  : "bg-emerald-100 text-emerald-700"
               }`}>
                 Low balance {stressDiff.balanceDiff > 0 ? "+" : ""}{formatCurrency(stressDiff.balanceDiff, currency)}
               </span>
@@ -503,13 +503,13 @@ export default function Home() {
             {stressDiff.readinessDiff !== 0 && (
               <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                 stressDiff.readinessDiff < 0
-                  ? "bg-rose-500/15 text-rose-300"
-                  : "bg-emerald-500/15 text-emerald-300"
+                  ? "bg-rose-100 text-rose-700"
+                  : "bg-emerald-100 text-emerald-700"
               }`}>
                 Readiness {stressDiff.readinessDiff > 0 ? "+" : ""}{stressDiff.readinessDiff} pts
               </span>
             )}
-            <span className="ml-auto text-[10px] text-slate-500">
+            <span className="ml-auto text-[10px] text-stone-400">
               vs. baseline (no crisis toggles)
             </span>
           </div>
@@ -533,11 +533,11 @@ export default function Home() {
                 {simulation.riskLevel}
               </span>
             </div>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
               <div
                 className={`h-full rounded-full ${
                   simulation.readinessScore >= 70
-                    ? "bg-emerald-400"
+                    ? "bg-emerald-500"
                     : simulation.readinessScore >= 40
                       ? "bg-amber-400"
                       : "bg-rose-400"
@@ -555,9 +555,9 @@ export default function Home() {
           >
             <p className="mt-2 text-3xl font-bold tracking-tight">
               {formatCurrency(simulation.postGradBurnRate, currency)}
-              <span className="text-sm font-medium text-slate-500">/mo</span>
+              <span className="text-sm font-medium text-stone-400">/mo</span>
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-stone-400">
               Cost of living + loan repayment
             </p>
           </KpiCard>
@@ -571,12 +571,12 @@ export default function Home() {
               className={`mt-2 text-3xl font-bold tracking-tight ${
                 simulation.lowestBalance < 0
                   ? "text-rose-400"
-                  : "text-slate-100"
+                  : "text-stone-900"
               }`}
             >
               {formatCurrency(simulation.lowestBalance, currency)}
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-stone-400">
               {simulation.lowestBalance < 0
                 ? "Cash cliff — negative balance projected"
                 : "Balance stays positive across 24 months"
@@ -592,9 +592,9 @@ export default function Home() {
           >
             <p className="mt-2 text-3xl font-bold tracking-tight">
               {simulation.runwayDaysAfterGrad}
-              <span className="text-sm font-medium text-slate-500"> days</span>
+              <span className="text-sm font-medium text-stone-400"> days</span>
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-stone-400">
               Cash at grad covers burn after deposit
             </p>
           </KpiCard>
@@ -602,8 +602,8 @@ export default function Home() {
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(340px,420px)_1fr]">
           <section className="flex flex-col gap-5">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-              <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Landmark className="h-4 w-4 text-sky-400" />
                 Campus Cashflow
               </h2>
@@ -641,8 +641,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-              <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <GraduationCap className="h-4 w-4 text-emerald-400" />
                 Graduation &amp; Relocation
               </h2>
@@ -670,8 +670,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-              <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-serif mb-4 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Wallet className="h-4 w-4 text-amber-400" />
                 First Job Reality
               </h2>
@@ -719,12 +719,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-              <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-100">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-serif mb-1 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <AlertTriangle className="h-4 w-4 text-rose-400" />
                 What-If Crisis Stress-Test
               </h2>
-              <p className="mb-4 text-xs text-slate-400">
+              <p className="mb-4 text-xs text-stone-500">
                 Layer worst-case shocks onto your runway.
               </p>
               <div className="flex flex-col gap-2.5">
@@ -775,14 +775,14 @@ export default function Home() {
           <section className="flex flex-col gap-5">
             <VerdictBanner simulation={simulation} currencySymbol={CURRENCY_SYMBOLS[currency]} />
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+                <h2 className="font-serif flex items-center gap-2 text-sm font-semibold text-stone-900">
                   <BrainCircuit className="h-4 w-4 text-emerald-400" />
                   24-Month Cash Runway
                 </h2>
                 {simulation.zeroCashMonth && (
-                  <span className="rounded-full bg-rose-500/15 px-2.5 py-1 text-[10px] font-bold text-rose-300">
+                  <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700">
                     Cash cliff at {simulation.zeroCashMonth}
                   </span>
                 )}
@@ -798,8 +798,8 @@ export default function Home() {
                 onClick={() => setSimulatePlan((prev) => !prev)}
                 className={`mt-4 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
                   simulatePlan
-                    ? "border-violet-400 bg-violet-400/10 text-violet-300"
-                    : "border-slate-700 text-slate-300 hover:border-violet-500/50 hover:text-violet-300"
+                    ? "border-violet-500 bg-violet-50 text-violet-700"
+                    : "border-stone-300 text-stone-700 hover:border-violet-500/50 hover:text-violet-300"
                 }`}
               >
                 Preview Micro-Action Savings Plan
@@ -807,7 +807,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-100">
+              <h2 className="font-serif mb-3 flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <Sparkles className="h-4 w-4 text-emerald-400" />
                 AI Financial Advisor
               </h2>

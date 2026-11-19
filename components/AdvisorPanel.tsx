@@ -37,9 +37,9 @@ export default function AdvisorPanel({
 }: AdvisorPanelProps) {
   if (loading) {
     return (
-      <div className="flex min-h-[280px] flex-col items-center justify-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+      <div className="flex min-h-[280px] flex-col items-center justify-center gap-3 rounded-2xl border border-stone-200 bg-white p-6">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-stone-500">
           Running your AI stress-test&hellip;
         </p>
       </div>
@@ -48,13 +48,13 @@ export default function AdvisorPanel({
 
   if (!report) {
     return (
-      <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-center">
+      <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center">
         <Sparkles className="h-9 w-9 text-emerald-400" />
         <div>
-          <p className="text-base font-semibold text-slate-100">
+          <p className="text-base font-semibold text-stone-900">
             No AI stress-test yet
           </p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-stone-500">
             Run the advisor to surface hidden post-grad costs and a 3-step
             &ldquo;Small Money, Big Plan&rdquo; action plan.
           </p>
@@ -74,29 +74,29 @@ export default function AdvisorPanel({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+      <div className="rounded-2xl border border-stone-200 bg-white p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+          <h3 className="flex items-center gap-2 text-sm font-semibold text-stone-900">
             <Sparkles className="h-4 w-4 text-emerald-400" />
             Executive Summary
           </h3>
           <span
             className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${
               report.source === "llm"
-                ? "bg-emerald-500/15 text-emerald-300"
-                : "bg-sky-500/15 text-sky-300"
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-sky-100 text-sky-700"
             }`}
           >
             {report.source === "llm" ? "Live AI" : "Smart fallback"}
           </span>
         </div>
-        <p className="text-sm leading-relaxed text-slate-300">
+        <p className="text-sm leading-relaxed text-stone-700">
           {report.executiveSummary}
         </p>
       </div>
 
       <div>
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-100">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-900">
           <AlertTriangle className="h-4 w-4 text-amber-400" />
           Hidden Post-Grad Cost Alerts
         </h3>
@@ -104,17 +104,17 @@ export default function AdvisorPanel({
           {report.hiddenCostsAlert.map((cost, index) => (
             <div
               key={`${cost.title}-${index}`}
-              className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4"
+              className="rounded-xl border border-amber-200 bg-amber-50 p-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-semibold text-amber-100">
+                <p className="text-sm font-semibold text-amber-800">
                   {cost.title}
                 </p>
-                <span className="shrink-0 rounded-md bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-300">
+                <span className="shrink-0 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
                   {currency(cost.estimatedCost, currencySymbol)}
                 </span>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
+              <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                 {cost.reason}
               </p>
             </div>
@@ -124,11 +124,11 @@ export default function AdvisorPanel({
 
       <div>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+          <h3 className="flex items-center gap-2 text-sm font-semibold text-stone-900">
             <PiggyBank className="h-4 w-4 text-emerald-400" />
             Small Money, Big Plan
           </h3>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-stone-500">
             Total: {currency(totalPlanWeeklySaving, currencySymbol)}/wk
           </span>
         </div>
@@ -136,20 +136,20 @@ export default function AdvisorPanel({
           {report.microActionPlan.map((action, index) => (
             <div
               key={`${action.action}-${index}`}
-              className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4"
+              className="rounded-xl border border-emerald-200 bg-emerald-50 p-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-semibold text-emerald-100">
+                <p className="text-sm font-semibold text-emerald-800">
                   {action.action}
                 </p>
-                <span className="shrink-0 rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">
+                <span className="shrink-0 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                   {currency(action.weeklySaving, currencySymbol)}/wk
                 </span>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
+              <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                 {action.impactSummary}
               </p>
-              <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-slate-800/70 px-2 py-1 text-[11px] font-medium text-emerald-300">
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-stone-100 px-2 py-1 text-[11px] font-medium text-emerald-700">
                 <TrendingUp className="h-3 w-3" />+{action.extraRunwayDays} extra
                 runway days
               </div>
@@ -165,34 +165,34 @@ export default function AdvisorPanel({
         onClick={onToggleSimulatePlan}
         className={`flex items-center justify-between gap-3 rounded-xl border p-4 text-left transition ${
           simulatePlan
-            ? "border-violet-500/40 bg-violet-500/10"
-            : "border-slate-800 bg-slate-900/60 hover:border-slate-700"
+            ? "border-violet-300 bg-violet-50"
+            : "border-stone-200 bg-white hover:border-stone-300"
         }`}
       >
         <span className="flex items-center gap-3">
           <span
             className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-              simulatePlan ? "bg-violet-500/20" : "bg-slate-800"
+              simulatePlan ? "bg-violet-100" : "bg-stone-100"
             }`}
           >
             <Zap
               className={`h-4 w-4 ${
-                simulatePlan ? "text-violet-300" : "text-slate-400"
+                simulatePlan ? "text-violet-700" : "text-stone-500"
               }`}
             />
           </span>
           <span>
-            <span className="block text-sm font-semibold text-slate-100">
+            <span className="block text-sm font-semibold text-stone-900">
               Simulate Applying Action Plan
             </span>
-            <span className="block text-xs text-slate-400">
+            <span className="block text-xs text-stone-500">
               Overlay the savings curve on the runway chart
             </span>
           </span>
         </span>
         <span
           className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${
-            simulatePlan ? "bg-violet-500" : "bg-slate-700"
+            simulatePlan ? "bg-violet-500" : "bg-stone-300"
           }`}
         >
           <span
@@ -208,7 +208,7 @@ export default function AdvisorPanel({
       <button
         type="button"
         onClick={onRunAi}
-        className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-emerald-500/50 hover:text-emerald-300"
+        className="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-semibold text-stone-800 transition hover:border-emerald-500/50 hover:text-emerald-300"
       >
         <Sparkles className="h-4 w-4" />
         Re-run AI Stress-Test
