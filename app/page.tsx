@@ -14,9 +14,15 @@ import {
 } from "lucide-react";
 import RunwayChart from "@/components/RunwayChart";
 import AdvisorPanel from "@/components/AdvisorPanel";
+import WelcomeHero from "@/components/WelcomeHero";
+import SetupWizard from "@/components/SetupWizard";
+import DemoScenarios from "@/components/DemoScenarios";
+import GuidedFlowStepper, {
+  type GuideStage,
+} from "@/components/GuidedFlowStepper";
+import VerdictBanner from "@/components/VerdictBanner";
 import {
   DEFAULT_INPUTS,
-  simulateImprovedTimeline,
   simulateTimeline,
   withBaseline,
   type FinanceInputs,
@@ -29,8 +35,11 @@ import {
   type StudentPreset,
 } from "@/lib/presets";
 
+type ViewMode = "welcome" | "guide" | "demo" | "wizard" | "dashboard";
+
 interface SliderRowProps {
   label: string;
+  helper?: string;
   value: number;
   min: number;
   max: number;
@@ -42,6 +51,7 @@ interface SliderRowProps {
 
 function SliderRow({
   label,
+  helper,
   value,
   min,
   max,
@@ -77,6 +87,9 @@ function SliderRow({
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full"
       />
+      {helper && (
+        <p className="text-[11px] leading-relaxed text-slate-500">{helper}</p>
+      )}
     </div>
   );
 }
@@ -142,20 +155,17 @@ function riskBadgeClass(riskLevel: string): string {
 }
 
 export default function Home() {
+  const [viewMode, setViewMode] = useState<ViewMode>("welcome");
   const [inputs, setInputs] = useState<FinanceInputs>(DEFAULT_INPUTS);
   const [report, setReport] = useState<AIAdvisorReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [simulatePlan, setSimulatePlan] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  const [wizardInputs, setWizardInputs] = useState<FinanceInputs>(DEFAULT_INPUTS);
 
   const simulation: SimulationResult = useMemo(
     () => simulateTimeline(inputs),
-    [inputs],
-  );
-
-  const comparisonTimeline = useMemo<MonthlyPoint[]>(
-    () => simulateImprovedTimeline(inputs, 125),
     [inputs],
   );
 
@@ -163,6 +173,14 @@ export default function Home() {
     () => withBaseline(inputs, simulation, 125),
     [inputs, simulation],
   );
+
+  const activeStage: GuideStage = report
+    ? 3
+    : inputs.delayedJobOffer ||
+        inputs.salaryCut20Percent ||
+        inputs.emergencyShock
+      ? 2
+      : 1;
 
   const updateInput = useCallback(
     <K extends keyof FinanceInputs>(key: K, value: FinanceInputs[K]) => {
@@ -186,7 +204,13 @@ export default function Home() {
     setActivePreset(preset.id);
     setError(null);
     setSimulatePlan(false);
+    setViewMode("dashboard");
   }, []);
+
+  const finishWizard = useCallback(() => {
+    setInputs({ ...wizardInputs });
+    setViewMode("dashboard");
+  }, [wizardInputs]);
 
   const analysisHash = useMemo(
     () =>
@@ -249,41 +273,93 @@ export default function Home() {
     ? report.microActionPlan.reduce((sum, a) => sum + a.weeklySaving, 0)
     : 0;
 
-  return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100">
-      <header className="sticky top-0 z-20 border-b border-slate-800 bg-[#0b1120]/85 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500">
-              <GraduationCap className="h-5 w-5 text-slate-950" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight">GradRunway</h1>
-              <p className="text-xs text-slate-400">
-                Small Money, Big Plan — Campus-to-Career Financial Stress-Tester
-              </p>
-            </div>
+  const navbar = (
+    <header className="sticky top-0 z-20 border-b border-slate-800 bg-[#0b1120]/85 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500">
+            <GraduationCap className="h-5 w-5 text-slate-950" />
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {STUDENT_PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                onClick={() => applyPreset(preset)}
-                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                  activePreset === preset.id
-                    ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-                    : "border-slate-700 bg-slate-900/60 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300"
-                }`}
-              >
-                {preset.label}
-              </button>
-            ))}
+          <div>
+            <h1 className="text-lg font-bold tracking-tight">GradRunway</h1>
+            <p className="text-xs text-slate-400">
+              Small Money, Big Plan — Campus-to-Career Financial Stress-Tester
+            </p>
           </div>
         </div>
-      </header>
+        <div className="flex flex-wrap items-center gap-2">
+          {viewMode === "dashboard" && (
+            <button
+              type="button"
+              onClick={() => setViewMode("welcome")}
+              className="rounded-full border border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-emerald-500/50 hover:text-emerald-300"
+            >
+              Back to Setup / Scenarios
+            </button>
+          )}
+          {STUDENT_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              onClick={() => applyPreset(preset)}
+              className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                activePreset === preset.id
+                  ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
+                  : "border-slate-700 bg-slate-900/60 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300"
+              }`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </header>
+  );
+
+  if (viewMode === "welcome") {
+    return (
+      <WelcomeHero
+        onStartGuided={() => {
+          setWizardInputs({ ...DEFAULT_INPUTS });
+          setViewMode("wizard");
+        }}
+        onExploreDemos={() => setViewMode("demo")}
+      />
+    );
+  }
+
+  if (viewMode === "wizard") {
+    return (
+      <SetupWizard
+        inputs={wizardInputs}
+        onInputChange={(key, value) =>
+          setWizardInputs((prev) => ({ ...prev, [key]: value }))
+        }
+        onFinish={finishWizard}
+        onBack={() => setViewMode("welcome")}
+      />
+    );
+  }
+
+  if (viewMode === "demo") {
+    return (
+      <DemoScenarios
+        presets={STUDENT_PRESETS}
+        onSelect={applyPreset}
+        onBack={() => setViewMode("welcome")}
+      />
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#0b1120] text-slate-100">
+      {navbar}
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        <div className="mb-6">
+          <GuidedFlowStepper activeStage={activeStage} />
+        </div>
+
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
             <div className="flex items-center justify-between">
@@ -384,6 +460,7 @@ export default function Home() {
               <div className="flex flex-col gap-4">
                 <SliderRow
                   label="Current savings"
+                  helper="Cash you could touch today in an emergency."
                   value={inputs.currentSavings}
                   min={0}
                   max={20000}
@@ -393,6 +470,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Monthly student income"
+                  helper="Allowance, part-time work, or side gigs while on campus."
                   value={inputs.monthlyStudentIncome}
                   min={0}
                   max={3000}
@@ -402,6 +480,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Monthly student spend"
+                  helper="Everything you spend in a normal month on campus."
                   value={inputs.monthlyStudentSpend}
                   min={0}
                   max={3000}
@@ -420,6 +499,7 @@ export default function Home() {
               <div className="flex flex-col gap-4">
                 <SliderRow
                   label="Months until graduation"
+                  helper="How many months until you walk the stage?"
                   value={inputs.monthsUntilGraduation}
                   min={1}
                   max={24}
@@ -429,6 +509,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Upfront moving deposit"
+                  helper="Security deposit plus first-month rent due at move-in — often before your first paycheck."
                   value={inputs.upfrontMovingDeposit}
                   min={0}
                   max={8000}
@@ -447,6 +528,7 @@ export default function Home() {
               <div className="flex flex-col gap-4">
                 <SliderRow
                   label="Expected starting salary"
+                  helper="Your expected gross monthly pay in your first role."
                   value={inputs.expectedStartingSalary}
                   min={0}
                   max={8000}
@@ -456,6 +538,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Job search months"
+                  helper="Realistic months hunting before your first paycheck arrives."
                   value={inputs.jobSearchMonths}
                   min={0}
                   max={9}
@@ -465,6 +548,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Post-grad monthly cost"
+                  helper="Rent, food, transport, and bills once you move out — your burn rate."
                   value={inputs.postGradMonthlyCost}
                   min={0}
                   max={6000}
@@ -474,6 +558,7 @@ export default function Home() {
                 />
                 <SliderRow
                   label="Monthly loan repayment"
+                  helper="Fixed student-loan payment due every month."
                   value={inputs.monthlyLoanRepayment}
                   min={0}
                   max={1500}
@@ -535,6 +620,8 @@ export default function Home() {
           </section>
 
           <section className="flex flex-col gap-5">
+            <VerdictBanner simulation={simulation} />
+
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-100">
