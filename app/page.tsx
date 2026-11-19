@@ -211,6 +211,7 @@ export default function Home() {
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [wizardInputs, setWizardInputs] = useState<FinanceInputs>(DEFAULT_INPUTS);
   const [currency, setCurrency] = useState<Currency>("USD");
+  const [lang, setLang] = useState<"en" | "id">("en");
 
   const simulation: SimulationResult = useMemo(
     () => simulateTimeline(inputs),
@@ -358,78 +359,88 @@ export default function Home() {
     : 0;
 
   const navbar = (
-        <header className="sticky top-0 z-20 border-b border-stone-200 bg-[#faf8f5]/85 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500">
-            <GraduationCap className="h-5 w-5 text-stone-950" />
-          </div>
-          <div>
-            <h1 className="font-serif text-lg font-bold tracking-tight">GradRunway</h1>
-            <p className="text-xs text-stone-500">
-              Small Money, Big Plan — Campus-to-Career Financial Stress-Tester
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {viewMode === "dashboard" && (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  setInputs({ ...DEFAULT_INPUTS });
-                  setReport(null);
-                  setActivePreset(null);
-                  setError(null);
-                  setSimulatePlan(false);
-                  setCurrency("USD");
-                }}
-                className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-semibold text-stone-700 transition hover:border-rose-500/50 hover:text-rose-300"
-                title="Reset all inputs and report to defaults"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("welcome")}
-                className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-semibold text-stone-700 transition hover:border-emerald-500/50 hover:text-emerald-300"
-              >
-                Back to Setup / Scenarios
-              </button>
-              <div className="flex items-center rounded-full border border-stone-300 bg-white px-1">
-                {(["USD", "HKD", "IDR"] as Currency[]).map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setCurrency(c)}
-                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
-                      currency === c
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "text-stone-500 hover:text-stone-700"
-                    }`}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-          {STUDENT_PRESETS.map((preset) => (
+    <header className="sticky top-0 z-20 border-b border-stone-200 bg-[#faf8f5]/90 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <button
+          type="button"
+          onClick={() => setViewMode("welcome")}
+          className="flex shrink-0 items-center gap-2.5"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-900">
+            <GraduationCap className="h-4 w-4 text-white" />
+          </span>
+          <span className="font-serif text-base font-bold tracking-tight text-stone-900">
+            GradRunway
+          </span>
+        </button>
+
+        {viewMode === "dashboard" && (
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
+            <div className="flex items-center rounded-full border border-stone-300 bg-white px-0.5">
+              {(["USD", "HKD", "IDR"] as Currency[]).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCurrency(c)}
+                  className={`rounded-full px-2 py-1 text-[10px] font-bold transition ${
+                    currency === c
+                      ? "bg-stone-900 text-white"
+                      : "text-stone-500 hover:text-stone-700"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
             <button
-              key={preset.id}
               type="button"
-              onClick={() => applyPreset(preset)}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                activePreset === preset.id
-                  ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                  : "border-stone-300 bg-white text-stone-700 hover:border-emerald-500/50 hover:text-emerald-300"
-              }`}
+              onClick={() => {
+                setInputs({ ...DEFAULT_INPUTS });
+                setReport(null);
+                setActivePreset(null);
+                setError(null);
+                setSimulatePlan(false);
+                setCurrency("USD");
+              }}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-300 bg-white text-stone-500 transition hover:border-rose-300 hover:text-rose-500"
+              title={lang === "en" ? "Reset to defaults" : "Reset ke default"}
             >
-              {preset.label}
+              <RotateCcw className="h-3 w-3" />
             </button>
-          ))}
-        </div>
+            <button
+              type="button"
+              onClick={() => setViewMode("welcome")}
+              className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[10px] font-bold text-stone-600 transition hover:border-stone-400"
+            >
+              {lang === "en" ? "Exit" : "Keluar"}
+            </button>
+          </div>
+        )}
       </div>
+
+      {viewMode === "dashboard" && (
+        <div className="border-t border-stone-100 bg-white/60">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-1.5 px-4 py-1.5 sm:px-6">
+            <span className="mr-1 text-[9px] font-bold uppercase tracking-wider text-stone-400">
+              {lang === "en" ? "Presets:" : "Preset:"}
+            </span>
+            {STUDENT_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => applyPreset(preset)}
+                className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold transition ${
+                  activePreset === preset.id
+                    ? "border-stone-900 bg-stone-900 text-white"
+                    : "border-stone-200 bg-white text-stone-600 hover:border-stone-400"
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 
