@@ -292,6 +292,25 @@ export default function Home() {
     };
   }, [inputs, simulation]);
 
+  const baselineSimulation = useMemo(
+    () =>
+      simulateTimeline({
+        ...inputs,
+        delayedJobOffer: false,
+        salaryCut20Percent: false,
+        emergencyShock: false,
+      }),
+    [inputs],
+  );
+
+  const stressDiff = useMemo(() => {
+    const runwayDiff = simulation.runwayDaysAfterGrad - baselineSimulation.runwayDaysAfterGrad;
+    const balanceDiff = simulation.lowestBalance - baselineSimulation.lowestBalance;
+    const readinessDiff = simulation.readinessScore - baselineSimulation.readinessScore;
+    const hasStress = inputs.delayedJobOffer || inputs.salaryCut20Percent || inputs.emergencyShock;
+    return { runwayDiff, balanceDiff, readinessDiff, hasStress };
+  }, [simulation, baselineSimulation, inputs]);
+
   const storageKey = `gradrunway-report-${analysisHash}`;
 
   useEffect(() => {
@@ -457,6 +476,44 @@ export default function Home() {
         <div className="mb-6">
           <GuidedFlowStepper activeStage={activeStage} />
         </div>
+
+        {stressDiff.hasStress && (
+          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-rose-300">
+              Stress-Test Impact
+            </span>
+            {stressDiff.runwayDiff !== 0 && (
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                stressDiff.runwayDiff < 0
+                  ? "bg-rose-500/15 text-rose-300"
+                  : "bg-emerald-500/15 text-emerald-300"
+              }`}>
+                Runway {stressDiff.runwayDiff > 0 ? "+" : ""}{stressDiff.runwayDiff} days
+              </span>
+            )}
+            {stressDiff.balanceDiff !== 0 && (
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                stressDiff.balanceDiff < 0
+                  ? "bg-rose-500/15 text-rose-300"
+                  : "bg-emerald-500/15 text-emerald-300"
+              }`}>
+                Low balance {stressDiff.balanceDiff > 0 ? "+" : ""}{formatCurrency(stressDiff.balanceDiff, currency)}
+              </span>
+            )}
+            {stressDiff.readinessDiff !== 0 && (
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                stressDiff.readinessDiff < 0
+                  ? "bg-rose-500/15 text-rose-300"
+                  : "bg-emerald-500/15 text-emerald-300"
+              }`}>
+                Readiness {stressDiff.readinessDiff > 0 ? "+" : ""}{stressDiff.readinessDiff} pts
+              </span>
+            )}
+            <span className="ml-auto text-[10px] text-slate-500">
+              vs. baseline (no crisis toggles)
+            </span>
+          </div>
+        )}
 
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <KpiCard
