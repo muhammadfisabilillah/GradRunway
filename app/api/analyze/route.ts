@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 interface AnalyzeRequestBody {
   inputs: FinanceInputs;
   simulation: SimulationResult;
+  lang?: "en" | "id";
 }
 
 const PLACEHOLDER_KEYS = new Set([
@@ -134,10 +135,70 @@ function runwayDaysFromWeekly(
   return Math.round(((weeklySaving * 4.33) / postGradBurnRate) * 30);
 }
 
+const EN_TEXTS = {
+  riskCritical: "critical",
+  riskTight: "tight",
+  riskHealthy: "healthy",
+  balanceZeroBy: "Your balance hits $0 by",
+  balanceNeverZero: "Your balance never reaches $0 across the 24-month window.",
+  transitionIs: "Your transition is",
+  postGradBurn: "post-grad burn runs about",
+  and: "and",
+  projectedLow: "your projected low is",
+  leaving: "leaving roughly",
+  daysOfRunway: "days of runway after graduation.",
+  hiddenDeposit: "Relocation deposit & first-month setup",
+  depositNote: (amt: string) => `Your upfront moving deposit of $${amt} is drained before your first paycheck, shrinking the cash you actually have to survive on.`,
+  depositImpact: "",
+  hiddenJobHunt: "Extended job-search burn",
+  jobHuntNote: (months: number, burn: string) => `A ${months}-month job hunt at $${burn}/mo of fixed costs adds up before any salary arrives.`,
+  jobHuntImpact: "",
+  hiddenLoan: "Fixed loan repayment squeeze",
+  loanNote: (amt: string) => `Your $${amt}/mo loan repayment is committed cash that keeps draining during lean months.`,
+  loanImpact: "",
+  action1: "Bank one extra paid task or shift per week before graduation",
+  action1Impact: (weekly: number, burn: string) => `Saving $${weekly}/week adds real buffer against your $${burn}/mo post-grad burn.`,
+  action2: "Trim one subscription and one delivery order weekly",
+  action2Impact: "Cutting low-value recurring costs directly extends your runway without lifestyle collapse.",
+  action3: "Move part of the upfront deposit into a separate buffer account",
+  action3Impact: (amt: string) => `Spreading your $${amt} deposit cost protects liquidity during the highest-risk months.`,
+};
+
+const ID_TEXTS = {
+  riskCritical: "kritis",
+  riskTight: "terbatas",
+  riskHealthy: "sehat",
+  balanceZeroBy: "Saldo Anda hit $0 pada",
+  balanceNeverZero: "Saldo Anda tidak pernah mencapai $0 sepanjang 24 bulan.",
+  transitionIs: "Transisi Anda",
+  postGradBurn: "konsumsi pascapencuci",
+  and: "dan",
+  projectedLow: "saldo terendah proyeksi Anda",
+  leaving: "memberikan ruang",
+  daysOfRunway: "hari runway pascapencuci.",
+  hiddenDeposit: "Deposit pindahan & pemasangan awal",
+  depositNote: (amt: string) => `Deposit pindahan Anda $${amt} dihabiskan sebelum gaji pertama, mengurangi dana yang Anda pegang untuk bertahan.`,
+  depositImpact: "",
+  hiddenJobHunt: "Eksporasi lama mencari kerja",
+  jobHuntNote: (months: number, burn: string) => `Dalam ${months} bulan mencari kerja, biaya tetap $${burn}/mo menambah beban sebelum gaji datang.`,
+  jobHuntImpact: "",
+  hiddenLoan: "Cicilan pinjaman tetap",
+  loanNote: (amt: string) => `Cicilan pinjaman $${amt}/mo yang berbayar setiap bulan adalah kas tetap yang terus berkurang.`,
+  loanImpact: "",
+  action1: "Cadangan uang dari kegiatan baru setiap minggu sebelum kelulusan",
+  action1Impact: (weekly: number, burn: string) => `Menabung $${weekly}/minggu memberi ruang buffer untuk lawan biaya pascapencuci $${burn}/mo.`,
+  action2: "Kurangi satu berlangganan dan satu barang hemat sekali seminggu",
+  action2Impact: "Menurunkan biaya berulang yang tidak begitu penting akan memanjangkan runway secara signifikan.",
+  action3: "Bagi bagian deposit awal jadi dana buffer terpisah",
+  action3Impact: (amt: string) => `Memanfaatkan $${amt} deposit untuk melindungi dana di bulan beban tertinggi.`,
+};
+
 function buildFallbackReport(
   inputs: FinanceInputs,
   simulation: SimulationResult,
+  lang: "en" | "id" = "en",
 ): AIAdvisorReport {
+  const t = lang === "id" ? ID_TEXTS : EN_TEXTS;
   const burn = simulation.postGradBurnRate;
   const zero = simulation.zeroCashMonth;
   const low = simulation.lowestBalance;
@@ -149,42 +210,32 @@ function buildFallbackReport(
 
   const riskPhrase =
     simulation.riskLevel === "CRITICAL"
-      ? "critical"
+      ? t.riskCritical
       : simulation.riskLevel === "MODERATE"
-        ? "tight"
-        : "healthy";
+        ? t.riskTight
+        : t.riskHealthy;
 
   const zeroPhrase = zero
-    ? `Your balance hits $0 by ${zero}.`
-    : `Your balance never reaches $0 across the 24-month window.`;
+    ? `${t.balanceZeroBy} ${zero}.`
+    : t.balanceNeverZero;
 
-  const executiveSummary = `Your transition is ${riskPhrase}: post-grad burn runs about $${burn.toFixed(
-    0,
-  )}/mo and your projected low is $${low.toFixed(
-    0,
-  )}, leaving roughly ${runway} days of runway after graduation. ${zeroPhrase}`;
+  const executiveSummary = `${t.transitionIs} ${riskPhrase}: ${t.postGradBurn} about $${burn.toFixed(0)}/mo ${t.and} ${t.projectedLow} $${low.toFixed(0)}, ${t.leaving} roughly ${runway} ${t.daysOfRunway}. ${zeroPhrase}`;
 
   const hiddenCostsAlert: HiddenCost[] = [
     {
-      title: "Relocation deposit & first-month setup",
+      title: t.hiddenDeposit,
       estimatedCost: deposit,
-      reason: `Your upfront moving deposit of $${deposit.toFixed(
-        0,
-      )} is drained before your first paycheck, shrinking the cash you actually have to survive on.`,
+      reason: `${t.depositNote(deposit.toFixed(0))} ${t.depositImpact}`,
     },
     {
-      title: "Extended job-search burn",
+      title: t.hiddenJobHunt,
       estimatedCost: Math.round(burn * Math.max(1, jobHuntMonths)),
-      reason: `A ${jobHuntMonths}-month job hunt at $${burn.toFixed(
-        0,
-      )}/mo of fixed costs adds up before any salary arrives.`,
+      reason: `${t.jobHuntNote(jobHuntMonths, burn.toFixed(0))} ${t.jobHuntImpact}`,
     },
     {
-      title: "Fixed loan repayment squeeze",
+      title: t.hiddenLoan,
       estimatedCost: Math.round(inputs.monthlyLoanRepayment * 12),
-      reason: `Your $${inputs.monthlyLoanRepayment.toFixed(
-        0,
-      )}/mo loan repayment is committed cash that keeps draining during lean months.`,
+      reason: `${t.loanNote(inputs.monthlyLoanRepayment.toFixed(0))} ${t.loanImpact}`,
     },
   ];
 
@@ -192,27 +243,22 @@ function buildFallbackReport(
 
   const microActionPlan: MicroAction[] = [
     {
-      action: "Bank one extra paid task or shift per week before graduation",
+      action: t.action1,
       weeklySaving: baseActionWeekly,
       extraRunwayDays: runwayDaysFromWeekly(baseActionWeekly, burn),
-      impactSummary: `Saving $${baseActionWeekly}/week adds real buffer against your $${burn.toFixed(
-        0,
-      )}/mo post-grad burn.`,
+      impactSummary: t.action1Impact(baseActionWeekly, burn.toFixed(0)),
     },
     {
-      action: "Trim one subscription and one delivery order weekly",
+      action: t.action2,
       weeklySaving: Math.round(baseActionWeekly * 0.8),
       extraRunwayDays: runwayDaysFromWeekly(Math.round(baseActionWeekly * 0.8), burn),
-      impactSummary:
-        "Cutting low-value recurring costs directly extends your runway without lifestyle collapse.",
+      impactSummary: t.action2Impact,
     },
     {
-      action: "Move part of the upfront deposit into a separate buffer account",
+      action: t.action3,
       weeklySaving: Math.round(deposit / 12),
       extraRunwayDays: runwayDaysFromWeekly(Math.round(deposit / 12), burn),
-      impactSummary: `Spreading your $${deposit.toFixed(
-        0,
-      )} deposit cost protects liquidity during the highest-risk months.`,
+      impactSummary: t.action3Impact(deposit.toFixed(0)),
     },
   ];
 
@@ -235,7 +281,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  const { inputs, simulation } = (body ?? {}) as Partial<AnalyzeRequestBody>;
+  const { inputs, simulation, lang = "en" } = (body ?? {}) as Partial<AnalyzeRequestBody>;
 
   if (!isValidInputs(inputs) || !isValidSimulation(simulation)) {
     return NextResponse.json(
@@ -252,12 +298,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     !PLACEHOLDER_KEYS.has(apiKey.trim()) && apiKey.trim().length > 0;
 
   if (!hasValidKey || baseUrl.trim().length === 0) {
-    return NextResponse.json(buildFallbackReport(inputs, simulation), {
+    return NextResponse.json(buildFallbackReport(inputs, simulation, lang), {
       status: 200,
     });
   }
 
   const prompt = `You are a pragmatic student financial advisor. Analyze this graduate's cash runway and respond with ONLY a JSON object.
+
+Language requirement: Write the report in ${lang === "id" ? "Indonesian" : "English"}.
 
 INPUTS:
 ${JSON.stringify(inputs)}
@@ -292,8 +340,7 @@ hiddenCostsAlert must have exactly 3 items. microActionPlan must have exactly 3 
         messages: [
           {
             role: "system",
-            content:
-              "You are a concise, pragmatic student finance advisor. Always respond with valid JSON only.",
+            content: `You are a concise, pragmatic student finance advisor. Always respond with valid JSON only. Write reports in ${lang === "id" ? "Indonesian" : "English"}.`,
           },
           { role: "user", content: prompt },
         ],
@@ -319,7 +366,7 @@ hiddenCostsAlert must have exactly 3 items. microActionPlan must have exactly 3 
 
     return NextResponse.json(report, { status: 200 });
   } catch {
-    return NextResponse.json(buildFallbackReport(inputs, simulation), {
+    return NextResponse.json(buildFallbackReport(inputs, simulation, lang), {
       status: 200,
     });
   }

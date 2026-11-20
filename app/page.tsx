@@ -450,7 +450,7 @@ export default function Home() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inputs, simulation }),
+        body: JSON.stringify({ inputs, simulation, lang }),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = (await response.json()) as AIAdvisorReport;
