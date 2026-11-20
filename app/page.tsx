@@ -747,7 +747,7 @@ export default function Home() {
                   min={0}
                   max={20000}
                   step={100}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("currentSavings", v)}
                 />
                 <SliderRow
@@ -757,7 +757,7 @@ export default function Home() {
                   min={0}
                   max={3000}
                   step={50}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("monthlyStudentIncome", v)}
                 />
                 <SliderRow
@@ -767,7 +767,7 @@ export default function Home() {
                   min={0}
                   max={3000}
                   step={50}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("monthlyStudentSpend", v)}
                 />
               </div>
@@ -855,7 +855,7 @@ export default function Home() {
                   min={0}
                   max={8000}
                   step={100}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("upfrontMovingDeposit", v)}
                 />
               </div>
@@ -874,7 +874,7 @@ export default function Home() {
                   min={0}
                   max={8000}
                   step={100}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("expectedStartingSalary", v)}
                 />
                 <SliderRow
@@ -894,7 +894,7 @@ export default function Home() {
                   min={0}
                   max={6000}
                   step={50}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("postGradMonthlyCost", v)}
                 />
                 <SliderRow
@@ -904,7 +904,7 @@ export default function Home() {
                   min={0}
                   max={1500}
                   step={25}
-                  prefix="$"
+                  prefix={CURRENCY_SYMBOLS[currency]}
                   onChange={(v) => updateInput("monthlyLoanRepayment", v)}
                 />
               </div>
