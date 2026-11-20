@@ -494,6 +494,22 @@ export default function Home() {
         {viewMode === "dashboard" && (
           <div className="flex flex-wrap items-center justify-end gap-1.5">
             <div className="flex items-center rounded-full border border-stone-300 bg-white px-0.5">
+              {(["en", "id"] as const).map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLang(l)}
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+                    lang === l
+                      ? "bg-stone-900 text-white"
+                      : "text-stone-500 hover:text-stone-700"
+                  }`}
+                >
+                  {l === "en" ? "EN" : "ID"}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center rounded-full border border-stone-300 bg-white px-0.5">
               {(["USD", "HKD", "IDR"] as Currency[]).map((c) => (
                 <button
                   key={c}
